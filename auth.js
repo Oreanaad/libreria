@@ -1,7 +1,10 @@
 // Shared auth helper — used by index.html, catalogo.html, libro.html,
 // login.html, mi-cuenta.html and cart.js.
-// Backend: server/index.js (Express + Postgres), running locally for now.
-const API_BASE = 'http://localhost:3001/api';
+// Backend: server/index.js (Express + Postgres), served locally at :3001
+// during development, or via Netlify Functions (/api/*) once deployed.
+const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://localhost:3001/api'
+  : '/api';
 
 const AUTH_TOKEN_KEY = 'bf-token';
 const AUTH_USER_KEY = 'bf-user';

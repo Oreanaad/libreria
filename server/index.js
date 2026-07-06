@@ -8,7 +8,12 @@ const { Pool } = require('pg');
 const JWT_SECRET = process.env.JWT_SECRET;
 const PORT = process.env.PORT || 3001;
 
-const pool = new Pool({ database: process.env.PGDATABASE || 'bookstore' });
+// Local dev: connects to the local `bookstore` Postgres by socket/user.
+// Production (Netlify): DATABASE_URL points at the hosted Neon instance,
+// which requires SSL.
+const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+  : new Pool({ database: process.env.PGDATABASE || 'bookstore' });
 
 const app = express();
 app.use(cors());
@@ -194,4 +199,10 @@ app.post('/api/reviews', authenticate, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Booksflea API escuchando en http://localhost:${PORT}`));
+// Only bind a real port for local dev (`node index.js`). When required by
+// netlify/functions, this module just exports `app` for serverless-http.
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`Booksflea API escuchando en http://localhost:${PORT}`));
+}
+
+module.exports = app;
