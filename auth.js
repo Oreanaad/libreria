@@ -43,6 +43,19 @@ async function authFetch(path, options = {}) {
   return data;
 }
 
+// Fetches the live catalog from the API (source of truth: the `books` table,
+// editable from the admin panel). Normalizes numeric fields since Postgres
+// returns NUMERIC/INTEGER columns as strings over JSON.
+async function fetchBooks() {
+  const res = await fetch(`${API_BASE}/books`);
+  const data = await res.json();
+  return (data.books || []).map(b => ({
+    slug: b.slug, title: b.title, author: b.author,
+    price: Number(b.price), cat: b.cat, img: b.img, url: b.url,
+    desc: b.description, stock: Number(b.stock)
+  }));
+}
+
 // Updates any nav auth link (#authLink) on the page to reflect session state.
 function updateAuthNav() {
   document.querySelectorAll('.auth-link').forEach(link => {

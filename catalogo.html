@@ -106,6 +106,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:a
 .gactions a,.gactions button{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:all .2s;border:none;font-family:'Inter',sans-serif;cursor:pointer}
 .go-buy{background:var(--forest);color:#fff}
 .go-buy:hover{opacity:.88}
+.go-buy:disabled{background:#a8a196;cursor:not-allowed;opacity:.7}
 .go-detail{background:var(--paper2);color:var(--navy);border:1px solid var(--border)}
 .go-detail:hover{border-color:var(--navy)}
 
@@ -348,10 +349,11 @@ const CATS = [
   { slug:'entretenimiento', label:'Entretenimiento', icon:'🧩' }
 ];
 
-// ── REAL CATALOG DATA (from booksflea.com, shared via books-data.js) ──
-const BOOKS = BOOKS_DATA;
-
 const catMap = Object.fromEntries(CATS.map(c => [c.slug, c]));
+
+(async () => {
+// ── REAL CATALOG DATA (live from the admin-managed `books` table) ──
+const BOOKS = await fetchBooks();
 
 // Deep-linking: catalogo.html?cat=novela or ?cat=infantil,dibujo (from homepage collection cards)
 const urlParams = new URLSearchParams(location.search);
@@ -410,11 +412,11 @@ function makeCard(b){
       <div class="grating" id="rating-${b.slug}"></div>
       <div class="gprice">$${b.price}</div>
       <div class="gactions">
-        <button type="button" class="go-buy">Añadir 🛒</button>
+        <button type="button" class="go-buy"${b.stock <= 0 ? ' disabled' : ''}>${b.stock <= 0 ? 'Agotado' : 'Añadir 🛒'}</button>
         <a href="libro.html?slug=${b.slug}" class="go-detail">Detalle</a>
       </div>
     </div>`;
-  card.querySelector('.go-buy').addEventListener('click', () => addToCart(b));
+  if (b.stock > 0) card.querySelector('.go-buy').addEventListener('click', () => addToCart(b));
   return card;
 }
 
@@ -507,6 +509,8 @@ authFetch('/reviews/summary').then(data => {
     el.innerHTML = `<span class="rstars">${'★'.repeat(Math.round(s.avg))}${'☆'.repeat(5 - Math.round(s.avg))}</span> ${s.avg} (${s.count})`;
   });
 }).catch(err => console.error('No se pudo cargar el resumen de reseñas:', err.message));
+
+})();
 </script>
 </body>
 </html>

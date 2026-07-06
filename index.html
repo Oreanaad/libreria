@@ -184,6 +184,7 @@ section{padding:96px 0}
 .book-actions a,.book-actions button{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:.72rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:all .25s;border:none;font-family:'Inter',sans-serif;cursor:pointer}
 .book-buy{background:var(--forest);color:#fff}
 .book-buy:hover{opacity:.88}
+.book-buy:disabled{background:#a8a196;cursor:not-allowed;opacity:.7}
 .book-detail{background:transparent;color:var(--navy);border:1px solid var(--border)}
 .book-detail:hover{border-color:var(--navy)}
 .novedades-more{text-align:center;margin-top:44px}
@@ -757,10 +758,13 @@ document.querySelectorAll('[data-target]').forEach(el => {
   obs.observe(el);
 });
 
-// ── BOOK GRID (real catalog sample, shared via books-data.js) ──
+// ── BOOK GRID (real catalog sample, live from the admin-managed `books` table) ──
 const CAT_LABELS = { novela:'Novela', fantasia:'Fantasía', dibujo:'Dibujo', arte:'Arte', infantil:'Infantil', 'autoayuda-y-espiritualidad':'Autoayuda', anatomia:'Anatomía', 'ficcion-historica':'Ficción Histórica', entretenimiento:'Entretenimiento' };
 const FEATURED_TITLES = ['Caída Libre','A Court of Thorns and Roses — Coloring Book','Windy City 2: Jugando Fuerte','Capybara Zen','Un Año Iluminado','Dictator I: La Sombra de Julio César','A Un Paso de Ti','House of the Dragon — Coloring Book'];
-const BOOKS = FEATURED_TITLES.map(t => BOOKS_DATA.find(b => b.title === t)).filter(Boolean);
+
+(async () => {
+const allBooks = await fetchBooks();
+const BOOKS = FEATURED_TITLES.map(t => allBooks.find(b => b.title === t)).filter(Boolean);
 
 const grid = document.getElementById('bookGrid');
 BOOKS.forEach((b, i) => {
@@ -777,11 +781,11 @@ BOOKS.forEach((b, i) => {
       <div class="book-rating" id="rating-${b.slug}"></div>
       <div class="book-price">$${b.price}</div>
       <div class="book-actions">
-        <button type="button" class="book-buy">Añadir 🛒</button>
+        <button type="button" class="book-buy"${b.stock <= 0 ? ' disabled' : ''}>${b.stock <= 0 ? 'Agotado' : 'Añadir 🛒'}</button>
         <a href="libro.html?slug=${b.slug}" class="book-detail">Detalle</a>
       </div>
     </div>`;
-  card.querySelector('.book-buy').addEventListener('click', () => addToCart(b));
+  if (b.stock > 0) card.querySelector('.book-buy').addEventListener('click', () => addToCart(b));
   grid.appendChild(card);
   io.observe(card);
 });
@@ -794,6 +798,7 @@ authFetch('/reviews/summary').then(data => {
     el.innerHTML = `<span class="rstars">${'★'.repeat(Math.round(s.avg))}${'☆'.repeat(5 - Math.round(s.avg))}</span> ${s.avg} (${s.count})`;
   });
 }).catch(err => console.error('No se pudo cargar el resumen de reseñas:', err.message));
+})();
 
 // ── AUTORES ──
 const authorsGrid = document.getElementById('authorsGrid');

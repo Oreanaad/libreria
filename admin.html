@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de administración — Booksflea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,500;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --paper:#FEFDFB;
+  --paper2:#F3E9D7;
+  --card:#FFFFFF;
+  --navy:#2B2216;
+  --navy-deep:#1C1610;
+  --forest:#B8863E;
+  --sage:#D8B879;
+  --tan:#E8CE9E;
+  --leather:#8F6A2E;
+  --ink:#2E2820;
+  --muted:#746754;
+  --border:rgba(184,134,62,.24);
+  --grad:linear-gradient(135deg,#8A6A35,#B8894B);
+  --danger:#a8402a;
+}
+
+body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;line-height:1.65}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.serif{font-family:'Fraunces',serif}
+.accent{color:var(--forest);font-style:italic}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;background:rgba(254,253,251,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:1.5rem;letter-spacing:.5px;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo em{font-style:italic;color:var(--forest)}
+.nav-cta{background:var(--grad);color:#fff;padding:10px 22px;border-radius:100px;font-weight:700;font-size:.85rem;text-decoration:none;letter-spacing:.3px;transition:opacity .3s,transform .2s;white-space:nowrap}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
+.nav-logout{background:transparent;border:1.5px solid var(--navy);color:var(--navy);padding:9px 20px;border-radius:100px;font-family:'Inter',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .25s}
+.nav-logout:hover{background:var(--navy);color:#fff}
+
+#admin{padding:120px 0 90px}
+.admin-header{margin-bottom:30px}
+.admin-eyebrow{display:block;font-size:.78rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
+.admin-title{font-family:'Fraunces',serif;font-size:clamp(1.7rem,3.2vw,2.4rem);font-weight:600;color:var(--navy)}
+
+/* TABS */
+.tabs{display:flex;gap:8px;margin-bottom:36px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tab-btn{background:none;border:none;font-family:'Inter',sans-serif;font-weight:700;font-size:.9rem;color:var(--muted);padding:12px 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab-btn.active{color:var(--forest);border-bottom-color:var(--forest)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:40px}
+.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 16px;text-align:center}
+.stat-tile b{display:block;font-family:'Fraunces',serif;font-size:1.7rem;color:var(--navy);margin-bottom:2px}
+.stat-tile span{font-size:.72rem;color:var(--muted);letter-spacing:.2px}
+
+.section-title{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:600;color:var(--navy);margin:0 0 8px}
+.section-sub{font-size:.85rem;color:var(--muted);margin-bottom:20px}
+.admin-block{margin-bottom:48px}
+
+/* TABLES */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.85rem;min-width:640px}
+thead th{text-align:left;font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:14px 18px;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:12px 18px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--paper2)}
+.cell-title{font-weight:600;color:var(--navy)}
+.cell-muted{color:var(--muted);font-size:.8rem}
+.mini-input{width:80px;background:var(--paper2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-family:'Inter',sans-serif;font-size:.82rem;outline:none}
+.mini-input:focus{border-color:var(--forest)}
+.mini-input.wide{width:100%;min-width:160px}
+.stock-low{color:var(--danger);font-weight:700}
+.save-btn{background:var(--grad);color:#fff;border:none;border-radius:100px;padding:7px 16px;font-family:'Inter',sans-serif;font-weight:700;font-size:.76rem;cursor:pointer}
+.save-btn:disabled{opacity:.5;cursor:not-allowed}
+.del-btn{background:none;border:1px solid var(--border);color:var(--danger);border-radius:100px;padding:7px 12px;font-family:'Inter',sans-serif;font-weight:700;font-size:.76rem;cursor:pointer;margin-left:6px}
+.status-select{background:var(--paper2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;color:var(--forest);outline:none;cursor:pointer}
+.row-msg{font-size:.72rem;color:var(--forest);margin-left:8px}
+
+.empty-block{text-align:center;padding:60px 20px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:16px}
+.empty-block span{font-size:2.2rem;display:block;margin-bottom:14px}
+.loading{text-align:center;padding:60px 20px;color:var(--muted)}
+
+/* ADD BOOK FORM */
+.add-book-form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.add-book-form input,.add-book-form select,.add-book-form textarea{background:var(--paper2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'Inter',sans-serif;font-size:.85rem;outline:none;width:100%}
+.add-book-form input:focus,.add-book-form select:focus,.add-book-form textarea:focus{border-color:var(--forest)}
+.add-book-form textarea{grid-column:1/-1;min-height:70px;resize:vertical}
+.add-book-form .full{grid-column:1/-1}
+.add-book-submit{background:var(--grad);color:#fff;border:none;border-radius:100px;padding:12px 26px;font-family:'Inter',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;grid-column:1/-1;justify-self:start}
+.form-error{grid-column:1/-1;font-size:.8rem;color:var(--danger);display:none}
+.form-success{grid-column:1/-1;font-size:.8rem;color:var(--forest);display:none}
+
+.denied{text-align:center;padding:160px 20px 60px;color:var(--muted)}
+.denied span{font-size:2.4rem;display:block;margin-bottom:16px}
+
+@media(max-width:800px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .add-book-form{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">📖 Books<em>flea</em></a>
+      <div style="display:flex;gap:12px;align-items:center">
+        <a href="catalogo.html" class="nav-cta">Ver tienda</a>
+        <button class="nav-logout" id="logoutBtn">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div id="deniedView" style="display:none">
+  <div class="denied">
+    <span>🔒</span>
+    <p>Esta sección es solo para el equipo de Booksflea.</p>
+  </div>
+</div>
+
+<section id="admin" style="display:none">
+  <div class="container">
+    <div class="admin-header">
+      <span class="admin-eyebrow">Panel interno</span>
+      <h1 class="admin-title">Administración <em class="accent">Booksflea</em></h1>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="resumen">Resumen</button>
+      <button class="tab-btn" data-tab="pedidos">Pedidos</button>
+      <button class="tab-btn" data-tab="inventario">Inventario</button>
+      <button class="tab-btn" data-tab="clientes">Clientes</button>
+    </div>
+
+    <!-- RESUMEN -->
+    <div class="tab-panel active" id="tab-resumen">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-tile"><b>—</b><span>Pedidos totales</span></div>
+        <div class="stat-tile"><b>—</b><span>Ingresos</span></div>
+        <div class="stat-tile"><b>—</b><span>Clientes</span></div>
+        <div class="stat-tile"><b>—</b><span>Libros con poco stock</span></div>
+      </div>
+
+      <div class="admin-block">
+        <h2 class="section-title">Más vendidos</h2>
+        <p class="section-sub">Por unidades vendidas (excluye pedidos cancelados).</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Libro</th><th>Unidades vendidas</th></tr></thead>
+            <tbody id="topBooksBody"><tr><td colspan="2" class="cell-muted">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-block">
+        <h2 class="section-title">Stock bajo</h2>
+        <p class="section-sub">3 unidades o menos — considerá reponer.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Libro</th><th>Stock</th></tr></thead>
+            <tbody id="lowStockBody"><tr><td colspan="2" class="cell-muted">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEDIDOS -->
+    <div class="tab-panel" id="tab-pedidos">
+      <p class="section-sub">Todos los pedidos realizados en la tienda, del más reciente al más antiguo.</p>
+      <div id="ordersContainer"><div class="loading">Cargando...</div></div>
+    </div>
+
+    <!-- INVENTARIO -->
+    <div class="tab-panel" id="tab-inventario">
+      <h2 class="section-title">Agregar libro</h2>
+      <form class="add-book-form" id="addBookForm">
+        <input type="text" name="title" placeholder="Título" required>
+        <input type="text" name="author" placeholder="Autor" required>
+        <input type="number" name="price" placeholder="Precio (USD)" step="0.01" min="0" required>
+        <input type="number" name="stock" placeholder="Stock inicial" min="0" required>
+        <input type="text" name="cat" placeholder="Categoría (ej. novela)" required>
+        <input type="text" name="img" placeholder="URL de imagen de portada" required>
+        <input type="text" name="url" placeholder="URL en booksflea.com (opcional)">
+        <input type="text" name="slug" placeholder="Slug (opcional, se genera solo)">
+        <textarea name="description" placeholder="Descripción breve (opcional)"></textarea>
+        <div class="form-error" id="addBookError"></div>
+        <div class="form-success" id="addBookSuccess"></div>
+        <button type="submit" class="add-book-submit">Agregar al catálogo</button>
+      </form>
+
+      <h2 class="section-title" style="margin-top:36px">Catálogo completo</h2>
+      <p class="section-sub">Editá precio o stock y guardá — los cambios se reflejan al instante en la tienda.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Libro</th><th>Autor</th><th>Categoría</th><th>Precio</th><th>Stock</th><th></th></tr></thead>
+          <tbody id="booksBody"><tr><td colspan="6" class="cell-muted">Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div class="tab-panel" id="tab-clientes">
+      <p class="section-sub">Cuentas registradas en la tienda.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nombre</th><th>Email</th><th>Pedidos</th><th>Total gastado</th><th>Se unió</th></tr></thead>
+          <tbody id="usersBody"><tr><td colspan="5" class="cell-muted">Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="auth.js"></script>
+<script>
+if (!isLoggedIn()) {
+  location.href = 'login.html?redirect=admin.html';
+}
+
+const user = getUser();
+document.getElementById('logoutBtn').addEventListener('click', logout);
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+const DELIVERY_LABELS = {
+  'delivery-valencia': 'Delivery en Valencia',
+  'envio-nacional': 'Envío nacional (Zoom o MRW)',
+  'retiro-valencia': 'Retiro en tienda — Valencia',
+  'retiro-maracay': 'Retiro en Maracay (Cafebrería)'
+};
+const ORDER_STATUSES = ['pendiente', 'confirmado', 'enviado', 'entregado', 'cancelado'];
+
+function slugify(str) {
+  return str.toLowerCase().trim()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+// ── TABS ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+  });
+});
+
+// ── RESUMEN ──
+async function loadStats() {
+  try {
+    const stats = await authFetch('/admin/stats');
+    const tiles = document.querySelectorAll('.stat-tile b');
+    tiles[0].textContent = stats.order_count;
+    tiles[1].textContent = `$${stats.revenue.toFixed(2)}`;
+    tiles[2].textContent = stats.user_count;
+    tiles[3].textContent = stats.low_stock.length;
+
+    document.getElementById('topBooksBody').innerHTML = stats.top_books.length
+      ? stats.top_books.map(b => `<tr><td class="cell-title">${b.title || b.slug}</td><td>${b.qty_sold}</td></tr>`).join('')
+      : `<tr><td colspan="2" class="cell-muted">Todavía no hay ventas registradas.</td></tr>`;
+
+    document.getElementById('lowStockBody').innerHTML = stats.low_stock.length
+      ? stats.low_stock.map(b => `<tr><td class="cell-title">${b.title}</td><td class="stock-low">${b.stock}</td></tr>`).join('')
+      : `<tr><td colspan="2" class="cell-muted">Todo el catálogo tiene stock saludable.</td></tr>`;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// ── PEDIDOS ──
+async function loadOrders() {
+  const container = document.getElementById('ordersContainer');
+  try {
+    const { orders } = await authFetch('/admin/orders');
+    if (!orders.length) {
+      container.innerHTML = `<div class="empty-block"><span>📭</span>Todavía no hay pedidos en la tienda.</div>`;
+      return;
+    }
+    container.innerHTML = `<div class="table-wrap"><table>
+      <thead><tr><th>Pedido</th><th>Cliente</th><th>Envío</th><th>Total</th><th>Fecha</th><th>Estado</th></tr></thead>
+      <tbody>${orders.map(o => `
+        <tr>
+          <td class="cell-title">#${o.id}</td>
+          <td>${o.user_name}<div class="cell-muted">${o.user_email}</div></td>
+          <td class="cell-muted">
+            ${o.shipping ? (DELIVERY_LABELS[o.shipping.delivery] || o.shipping.delivery || '') : ''}
+            ${o.shipping && o.shipping.address ? `<div>📍 ${o.shipping.address}</div>` : ''}
+            ${o.shipping && o.shipping.agency ? `<div>🏢 ${o.shipping.agency} — ${o.shipping.location || ''}</div>` : ''}
+          </td>
+          <td>$${Number(o.total).toFixed(2)}</td>
+          <td class="cell-muted">${formatDate(o.created_at)}</td>
+          <td>
+            <select class="status-select" data-id="${o.id}">
+              ${ORDER_STATUSES.map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+            <span class="row-msg" id="order-msg-${o.id}"></span>
+          </td>
+        </tr>`).join('')}</tbody>
+    </table></div>`;
+
+    container.querySelectorAll('.status-select').forEach(sel => {
+      sel.addEventListener('change', async () => {
+        const id = sel.dataset.id;
+        const msg = document.getElementById(`order-msg-${id}`);
+        try {
+          await authFetch(`/admin/orders/${id}`, { method: 'PUT', body: JSON.stringify({ status: sel.value }) });
+          msg.textContent = '✓ Guardado';
+          setTimeout(() => { msg.textContent = ''; }, 2000);
+        } catch (err) {
+          msg.textContent = err.message;
+        }
+      });
+    });
+  } catch (err) {
+    container.innerHTML = `<div class="empty-block"><span>⚠️</span>${err.message}</div>`;
+  }
+}
+
+// ── INVENTARIO ──
+async function loadBooks() {
+  const body = document.getElementById('booksBody');
+  try {
+    const books = await fetchBooks();
+    body.innerHTML = books.map(b => `
+      <tr data-slug="${b.slug}">
+        <td class="cell-title">${b.title}</td>
+        <td class="cell-muted">${b.author}</td>
+        <td class="cell-muted">${b.cat}</td>
+        <td><input type="number" class="mini-input price-input" value="${b.price}" step="0.01" min="0"></td>
+        <td><input type="number" class="mini-input stock-input" value="${b.stock}" min="0"></td>
+        <td>
+          <button type="button" class="save-btn">Guardar</button>
+          <button type="button" class="del-btn">Eliminar</button>
+          <span class="row-msg"></span>
+        </td>
+      </tr>`).join('');
+
+    body.querySelectorAll('tr').forEach(row => {
+      const slug = row.dataset.slug;
+      const msg = row.querySelector('.row-msg');
+      row.querySelector('.save-btn').addEventListener('click', async () => {
+        const price = Number(row.querySelector('.price-input').value);
+        const stock = Number(row.querySelector('.stock-input').value);
+        try {
+          await authFetch(`/books/${slug}`, { method: 'PUT', body: JSON.stringify({ price, stock }) });
+          msg.textContent = '✓ Guardado';
+          setTimeout(() => { msg.textContent = ''; }, 2000);
+        } catch (err) {
+          msg.textContent = err.message;
+        }
+      });
+      row.querySelector('.del-btn').addEventListener('click', async () => {
+        if (!confirm(`¿Eliminar "${row.querySelector('.cell-title').textContent}" del catálogo?`)) return;
+        try {
+          await authFetch(`/books/${slug}`, { method: 'DELETE' });
+          row.remove();
+        } catch (err) {
+          msg.textContent = err.message;
+        }
+      });
+    });
+  } catch (err) {
+    body.innerHTML = `<tr><td colspan="6" class="cell-muted">${err.message}</td></tr>`;
+  }
+}
+
+document.getElementById('addBookForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const errEl = document.getElementById('addBookError');
+  const okEl = document.getElementById('addBookSuccess');
+  errEl.style.display = 'none';
+  okEl.style.display = 'none';
+
+  const data = Object.fromEntries(new FormData(form).entries());
+  const slug = data.slug.trim() ? slugify(data.slug) : slugify(data.title);
+  const payload = {
+    slug, title: data.title.trim(), author: data.author.trim(),
+    price: Number(data.price), stock: Number(data.stock),
+    cat: data.cat.trim().toLowerCase(), img: data.img.trim(),
+    url: data.url.trim() || null, description: data.description.trim() || null
+  };
+
+  try {
+    await authFetch('/books', { method: 'POST', body: JSON.stringify(payload) });
+    okEl.textContent = `"${payload.title}" agregado al catálogo.`;
+    okEl.style.display = 'block';
+    form.reset();
+    loadBooks();
+    loadStats();
+  } catch (err) {
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
+  }
+});
+
+// ── CLIENTES ──
+async function loadUsers() {
+  const body = document.getElementById('usersBody');
+  try {
+    const { users } = await authFetch('/admin/users');
+    body.innerHTML = users.map(u => `
+      <tr>
+        <td class="cell-title">${u.name}${u.is_admin ? ' 🛡️' : ''}</td>
+        <td class="cell-muted">${u.email}</td>
+        <td>${u.order_count}</td>
+        <td>$${Number(u.total_spent).toFixed(2)}</td>
+        <td class="cell-muted">${formatDate(u.created_at)}</td>
+      </tr>`).join('');
+  } catch (err) {
+    body.innerHTML = `<tr><td colspan="5" class="cell-muted">${err.message}</td></tr>`;
+  }
+}
+
+// ── INIT (verify admin server-side, since role also lives in the JWT-backed user record) ──
+async function init() {
+  try {
+    const { user: me } = await authFetch('/me');
+    if (!me.is_admin) throw new Error('not admin');
+    document.getElementById('admin').style.display = '';
+    loadStats();
+    loadOrders();
+    loadBooks();
+    loadUsers();
+  } catch (err) {
+    document.getElementById('deniedView').style.display = '';
+  }
+}
+
+if (isLoggedIn()) init();
+</script>
+</body>
+</html>

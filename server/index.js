@@ -37,7 +37,20 @@ function signToken(user) {
 }
 
 function publicUser(user) {
-  return { id: user.id, name: user.name, email: user.email };
+  return { id: user.id, name: user.name, email: user.email, is_admin: !!user.is_admin };
+}
+
+async function requireAdmin(req, res, next) {
+  try {
+    const result = await pool.query('SELECT is_admin FROM users WHERE id = $1', [req.userId]);
+    if (!result.rows[0] || !result.rows[0].is_admin) {
+      return res.status(403).json({ error: 'No tenés permisos de administrador.' });
+    }
+    next();
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor.' });
+  }
 }
 
 // ── AUTH ──
@@ -56,7 +69,7 @@ app.post('/api/auth/signup', async (req, res) => {
     }
     const hash = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      'INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email',
+      'INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email, is_admin',
       [name.trim(), email.toLowerCase().trim(), hash]
     );
     const user = result.rows[0];
@@ -87,12 +100,88 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.get('/api/me', authenticate, async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, name, email FROM users WHERE id = $1', [req.userId]);
+    const result = await pool.query('SELECT id, name, email, is_admin FROM users WHERE id = $1', [req.userId]);
     if (!result.rows[0]) return res.status(404).json({ error: 'Usuario no encontrado.' });
-    res.json({ user: result.rows[0] });
+    res.json({ user: publicUser(result.rows[0]) });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Error del servidor.' });
+  }
+});
+
+// ── BOOKS ──
+app.get('/api/books', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM books ORDER BY title ASC');
+    res.json({ books: result.rows });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al obtener el catálogo.' });
+  }
+});
+
+app.get('/api/books/:slug', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM books WHERE slug = $1', [req.params.slug]);
+    if (!result.rows[0]) return res.status(404).json({ error: 'Libro no encontrado.' });
+    res.json({ book: result.rows[0] });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor.' });
+  }
+});
+
+app.post('/api/books', authenticate, requireAdmin, async (req, res) => {
+  const { slug, title, author, price, cat, img, url, description, stock } = req.body || {};
+  if (!slug || !title || !author || typeof price !== 'number' || !cat || !img) {
+    return res.status(400).json({ error: 'Faltan datos obligatorios: slug, título, autor, precio, categoría e imagen.' });
+  }
+  try {
+    const result = await pool.query(
+      `INSERT INTO books (slug, title, author, price, cat, img, url, description, stock)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+      [slug, title, author, price, cat, img, url || null, description || null, Number.isInteger(stock) ? stock : 0]
+    );
+    res.json({ book: result.rows[0] });
+  } catch (e) {
+    if (e.code === '23505') return res.status(409).json({ error: 'Ya existe un libro con ese slug.' });
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al crear el libro.' });
+  }
+});
+
+app.put('/api/books/:slug', authenticate, requireAdmin, async (req, res) => {
+  const { title, author, price, cat, img, url, description, stock } = req.body || {};
+  try {
+    const result = await pool.query(
+      `UPDATE books SET
+         title = COALESCE($2, title),
+         author = COALESCE($3, author),
+         price = COALESCE($4, price),
+         cat = COALESCE($5, cat),
+         img = COALESCE($6, img),
+         url = COALESCE($7, url),
+         description = COALESCE($8, description),
+         stock = COALESCE($9, stock)
+       WHERE slug = $1 RETURNING *`,
+      [req.params.slug, title, author, price, cat, img, url, description, stock]
+    );
+    if (!result.rows[0]) return res.status(404).json({ error: 'Libro no encontrado.' });
+    res.json({ book: result.rows[0] });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al actualizar el libro.' });
+  }
+});
+
+app.delete('/api/books/:slug', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const result = await pool.query('DELETE FROM books WHERE slug = $1 RETURNING slug', [req.params.slug]);
+    if (!result.rows[0]) return res.status(404).json({ error: 'Libro no encontrado.' });
+    res.json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al eliminar el libro.' });
   }
 });
 
@@ -120,6 +209,15 @@ app.post('/api/orders', authenticate, async (req, res) => {
       'INSERT INTO orders (user_id, items, total, shipping) VALUES ($1, $2, $3, $4) RETURNING id, items, total, status, shipping, created_at',
       [req.userId, JSON.stringify(items), total, shipping ? JSON.stringify(shipping) : null]
     );
+    // Best-effort stock decrement per purchased item (won't go below 0).
+    for (const item of items) {
+      if (item.slug) {
+        await pool.query(
+          'UPDATE books SET stock = GREATEST(stock - $2, 0) WHERE slug = $1',
+          [item.slug, item.qty || 1]
+        );
+      }
+    }
     res.json({ order: result.rows[0] });
   } catch (e) {
     console.error(e);
@@ -196,6 +294,88 @@ app.post('/api/reviews', authenticate, async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Error del servidor al guardar la reseña.' });
+  }
+});
+
+// ── ADMIN ──
+app.get('/api/admin/orders', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT o.id, o.items, o.total, o.status, o.shipping, o.created_at,
+              u.name AS user_name, u.email AS user_email
+       FROM orders o JOIN users u ON u.id = o.user_id
+       ORDER BY o.created_at DESC`
+    );
+    res.json({ orders: result.rows });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al obtener los pedidos.' });
+  }
+});
+
+app.put('/api/admin/orders/:id', authenticate, requireAdmin, async (req, res) => {
+  const { status } = req.body || {};
+  const VALID = ['pendiente', 'confirmado', 'enviado', 'entregado', 'cancelado'];
+  if (!VALID.includes(status)) {
+    return res.status(400).json({ error: `Estado inválido. Usá uno de: ${VALID.join(', ')}.` });
+  }
+  try {
+    const result = await pool.query(
+      'UPDATE orders SET status = $2 WHERE id = $1 RETURNING id, status',
+      [req.params.id, status]
+    );
+    if (!result.rows[0]) return res.status(404).json({ error: 'Pedido no encontrado.' });
+    res.json({ order: result.rows[0] });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al actualizar el pedido.' });
+  }
+});
+
+app.get('/api/admin/users', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT u.id, u.name, u.email, u.is_admin, u.created_at,
+              COUNT(DISTINCT o.id) AS order_count,
+              COALESCE(SUM(o.total), 0) AS total_spent
+       FROM users u
+       LEFT JOIN orders o ON o.user_id = u.id
+       GROUP BY u.id
+       ORDER BY u.created_at DESC`
+    );
+    res.json({ users: result.rows });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al obtener los clientes.' });
+  }
+});
+
+app.get('/api/admin/stats', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const [orders, revenue, users, lowStock, topBooks] = await Promise.all([
+      pool.query('SELECT COUNT(*) FROM orders'),
+      pool.query(`SELECT COALESCE(SUM(total), 0) AS revenue FROM orders WHERE status != 'cancelado'`),
+      pool.query('SELECT COUNT(*) FROM users'),
+      pool.query('SELECT slug, title, stock FROM books WHERE stock <= 3 ORDER BY stock ASC'),
+      pool.query(
+        `SELECT item->>'slug' AS slug, item->>'title' AS title,
+                SUM((item->>'qty')::int) AS qty_sold
+         FROM orders o, jsonb_array_elements(o.items) AS item
+         WHERE o.status != 'cancelado'
+         GROUP BY item->>'slug', item->>'title'
+         ORDER BY qty_sold DESC LIMIT 5`
+      ),
+    ]);
+    res.json({
+      order_count: Number(orders.rows[0].count),
+      revenue: Number(revenue.rows[0].revenue),
+      user_count: Number(users.rows[0].count),
+      low_stock: lowStock.rows,
+      top_books: topBooks.rows.map(r => ({ ...r, qty_sold: Number(r.qty_sold) })),
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al obtener las estadísticas.' });
   }
 });
 

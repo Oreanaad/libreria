@@ -67,6 +67,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:a
 .detail-author{font-size:1rem;color:var(--muted);margin-bottom:22px}
 .detail-price{font-family:'Fraunces',serif;font-weight:700;font-size:2.1rem;color:var(--navy);margin-bottom:26px}
 .detail-desc{font-size:.98rem;color:var(--ink);line-height:1.9;margin-bottom:32px;max-width:56ch}
+.detail-stock-out{font-size:.9rem;font-weight:600;color:#a8452f;margin:-18px 0 22px}
 .detail-actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px}
 .btn-primary{background:var(--grad);color:#fff;padding:15px 30px;border-radius:100px;font-weight:700;font-size:.92rem;text-decoration:none;letter-spacing:.3px;transition:all .3s;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif}
 .btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(43,34,22,.28)}
@@ -286,9 +287,11 @@ const CATS = {
   'ficcion-historica':'Ficción Histórica', entretenimiento:'Entretenimiento'
 };
 
-// ── LOAD BOOK FROM SLUG ──
+// ── LOAD BOOK FROM SLUG (live from the admin-managed `books` table) ──
+(async () => {
 const slug = new URLSearchParams(location.search).get('slug');
-const book = BOOKS_DATA.find(b => b.slug === slug);
+const allBooks = await fetchBooks();
+const book = allBooks.find(b => b.slug === slug);
 const contentEl = document.getElementById('detailContent');
 
 if (!book) {
@@ -312,21 +315,24 @@ if (!book) {
         <p class="detail-author">${book.author}</p>
         <div class="detail-price">$${book.price}</div>
         <p class="detail-desc">${book.desc || 'Descripción no disponible por el momento — escríbenos y te contamos más sobre este título.'}</p>
+        ${book.stock <= 0 ? '<p class="detail-stock-out">Agotado por el momento — escríbenos para saber cuándo vuelve a haber stock.</p>' : ''}
         <div class="detail-actions">
-          <button type="button" class="btn-primary" id="detailAddCart">Añadir al carrito 🛒</button>
-          <button type="button" class="btn-outline" id="detailBuyNow">Comprar ahora →</button>
+          <button type="button" class="btn-primary" id="detailAddCart"${book.stock <= 0 ? ' disabled' : ''}>Añadir al carrito 🛒</button>
+          <button type="button" class="btn-outline" id="detailBuyNow"${book.stock <= 0 ? ' disabled' : ''}>Comprar ahora →</button>
         </div>
         <a href="${book.url}" target="_blank" rel="noopener" class="detail-external">Ver ficha completa en booksflea.com ↗</a>
       </div>
     </div>`;
 
-  document.getElementById('detailAddCart').addEventListener('click', () => addToCart(book));
-  document.getElementById('detailBuyNow').addEventListener('click', () => {
-    addToCart(book);
-    location.href = 'checkout.html';
-  });
+  if (book.stock > 0) {
+    document.getElementById('detailAddCart').addEventListener('click', () => addToCart(book));
+    document.getElementById('detailBuyNow').addEventListener('click', () => {
+      addToCart(book);
+      location.href = 'checkout.html';
+    });
+  }
 
-  const related = BOOKS_DATA.filter(b => b.cat === book.cat && b.slug !== book.slug).slice(0, 4);
+  const related = allBooks.filter(b => b.cat === book.cat && b.slug !== book.slug).slice(0, 4);
   if (related.length) {
     document.getElementById('related').style.display = '';
     const relatedGrid = document.getElementById('relatedGrid');
@@ -342,6 +348,7 @@ if (!book) {
 
   loadBookReviews(book.slug);
 }
+})();
 
 async function loadBookReviews(slug) {
   try {
