@@ -66,6 +66,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:a
 .cat-title{font-family:'Fraunces',serif;font-size:clamp(2.2rem,4.6vw,3.4rem);font-weight:600;line-height:1.1;color:var(--navy);margin-bottom:16px}
 .cat-desc{font-size:1.02rem;color:var(--muted);max-width:520px;margin:0 auto 8px}
 .cat-count{font-size:.85rem;color:var(--leather);font-weight:700;margin-top:6px}
+.trust-badge{display:inline-flex;align-items:center;gap:9px;margin-top:18px;font-size:.84rem;color:var(--muted)}
+.trust-stars{color:var(--forest);letter-spacing:1px;font-size:.95rem}
+.trust-badge b{color:var(--navy);font-weight:700}
 
 /* ── TOOLBAR ── */
 #toolbar{position:sticky;top:0;z-index:900;background:rgba(254,253,251,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:16px 0;margin-top:20px}
@@ -84,41 +87,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:a
 .pill.active{background:var(--grad);border-color:transparent;color:#fff}
 
 /* ── GRID ── */
-#catGrid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:22px;margin:44px 0}
-.gcard{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease,opacity .3s ease;display:flex;flex-direction:column;opacity:1}
-.gcard:hover{transform:translateY(-6px);box-shadow:0 26px 50px rgba(43,34,22,.16)}
+#catGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;margin:44px 0}
+.gcard{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease,border-color .35s ease;display:flex;flex-direction:column}
+.gcard:hover{transform:translateY(-6px);box-shadow:0 24px 44px rgba(43,34,22,.16);border-color:var(--sage)}
 .gcard.hide{display:none}
-.gcard.spotlight{grid-column:span 2;grid-row:span 2;flex-direction:row}
-.gcard.spotlight .gcover{aspect-ratio:auto;flex:0 0 52%;align-self:stretch}
-.gcard.spotlight .ginfo{flex:1;padding:32px;display:flex;flex-direction:column;justify-content:center}
-.gcard.spotlight .gtitle{font-size:1.5rem;-webkit-line-clamp:3;margin-bottom:6px}
-.gcard.spotlight .gauthor{font-size:.85rem}
-.gcard.spotlight .goverlay{display:none}
-.spot-badge{display:inline-block;width:fit-content;font-size:.72rem;font-weight:700;letter-spacing:.5px;color:var(--leather);margin:16px 0 4px;order:-1}
-.spot-meta{display:flex;align-items:center;gap:14px;margin:16px 0 26px}
-.spot-cat{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--forest);background:rgba(184,134,62,.1);padding:5px 14px;border-radius:100px}
-.spot-price{font-family:'Fraunces',serif;font-weight:700;font-size:1.7rem;color:var(--navy)}
-.spot-actions{display:flex;gap:10px;flex-wrap:wrap}
-.spot-actions a{padding:12px 22px;border-radius:100px;font-size:.82rem;font-weight:700;text-decoration:none;transition:all .25s}
-.spot-actions .go-buy{background:var(--grad);color:#fff;flex:none}
-.spot-actions .go-buy:hover{opacity:.88;transform:translateY(-2px)}
-.go-detail-alt{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}
-.go-detail-alt:hover{background:var(--navy);color:#fff}
 
 .gcover{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--paper2)}
 .gcover img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
-.gcard:hover .gcover img{transform:scale(1.06)}
-.gtag{position:absolute;top:10px;left:10px;background:rgba(254,253,251,.92);color:var(--forest);font-size:.63rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 10px;border-radius:100px;z-index:2}
-.gprice{position:absolute;top:10px;right:10px;background:var(--navy);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:.82rem;padding:4px 11px;border-radius:100px;z-index:2}
-.goverlay{position:absolute;inset:auto 0 0 0;display:flex;gap:8px;padding:12px;background:linear-gradient(0deg,rgba(28,22,16,.88),transparent);transform:translateY(100%);transition:transform .3s ease;z-index:2}
+.gcard:hover .gcover img{transform:scale(1.07)}
+.gtag{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:4px;background:rgba(254,253,251,.94);color:var(--forest);font-size:.62rem;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:4px 10px 4px 8px;border-radius:100px;z-index:2}
+.gprice{position:absolute;top:10px;right:10px;background:var(--navy);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:.8rem;padding:4px 11px;border-radius:100px;z-index:2}
+.goverlay{position:absolute;inset:auto 0 0 0;display:flex;gap:7px;padding:11px;background:linear-gradient(0deg,rgba(28,22,16,.9),transparent);transform:translateY(100%);transition:transform .3s ease;z-index:2}
 .gcard:hover .goverlay{transform:translateY(0)}
-.goverlay a{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:.72rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:opacity .2s}
+.goverlay a{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:opacity .2s}
 .go-buy{background:var(--forest);color:#fff}
 .go-buy:hover{opacity:.88}
 .go-detail{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35)}
-.ginfo{padding:14px 15px 16px}
-.gtitle{font-family:'Fraunces',serif;font-size:.9rem;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.gauthor{font-size:.72rem;color:var(--muted)}
+.ginfo{padding:13px 14px 15px}
+.gtitle{font-family:'Fraunces',serif;font-size:.86rem;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gauthor{font-size:.7rem;color:var(--muted)}
 
 .empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--muted)}
 .empty-state span{font-size:2.4rem;display:block;margin-bottom:14px}
@@ -144,18 +131,17 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
 .wa-btn:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(37,211,102,.55)}
 
 /* ── RESPONSIVE ── */
+@media(max-width:1200px){
+  #catGrid{grid-template-columns:repeat(4,1fr)}
+}
 @media(max-width:1000px){
   #catGrid{grid-template-columns:repeat(3,1fr)}
-  .gcard.spotlight{grid-column:span 3;grid-row:span 1;flex-direction:row}
-  .gcard.spotlight .gcover{flex-basis:38%}
 }
 @media(max-width:820px){
   .nav-links{display:none}
   .hamburger{display:flex}
   nav .nav-cta{display:none}
   #catGrid{grid-template-columns:repeat(2,1fr)}
-  .gcard.spotlight{grid-column:span 2;flex-direction:column}
-  .gcard.spotlight .gcover{flex-basis:auto;aspect-ratio:3/4;align-self:auto}
 }
 @media(max-width:560px){
   #catGrid{grid-template-columns:1fr 1fr;gap:14px}
@@ -194,6 +180,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
     <h1 class="cat-title">Explora nuestra <em class="accent">selección</em></h1>
     <p class="cat-desc">Una muestra curada de nuestro catálogo activo — filtra por colección, busca por título o autor, y compra directo por WhatsApp.</p>
     <p class="cat-count" id="resultCount">20 títulos seleccionados de +50.000 en catálogo</p>
+    <div class="trust-badge"><span class="trust-stars">★★★★★</span> <b>4.9/5</b> — valoración de nuestros clientes</div>
   </div>
 </section>
 
@@ -283,7 +270,7 @@ const CATS = [
 
 // ── REAL CATALOG DATA (from booksflea.com) ──
 const BOOKS = [
-  { title:'Caída Libre', author:'Ali Hazelwood', price:30, cat:'novela', img:'assets/book-caida-libre.jpg', url:'https://booksflea.com/novela/caida-libre/', spotlight:true },
+  { title:'Caída Libre', author:'Ali Hazelwood', price:30, cat:'novela', img:'assets/book-caida-libre.jpg', url:'https://booksflea.com/novela/caida-libre/' },
   { title:'A Court of Thorns and Roses — Coloring Book', author:'Sarah J. Maas', price:25, cat:'fantasia', img:'assets/book-acotar-coloring.jpg', url:'https://booksflea.com/fantasia/a-court-of-thorns-and-roses-the-official-coloring-book/' },
   { title:'Windy City 2: Jugando Fuerte', author:'Liz Tomforde', price:39, cat:'novela', img:'assets/book-windycity2.webp', url:'https://booksflea.com/novela/windy-city-2-jugando-fuerte-the-right-move/' },
   { title:'Windy City 1: Rozando el Cielo', author:'Liz Tomforde', price:39, cat:'novela', img:'assets/book-windycity1.jpg', url:'https://booksflea.com/novela/rozando-el-cielo/' },
@@ -339,25 +326,17 @@ function buyLink(b){
 
 function makeCard(b){
   const card = document.createElement('div');
-  card.className = 'gcard' + (b.spotlight ? ' spotlight' : '');
+  card.className = 'gcard';
   card.dataset.cat = b.cat;
   card.dataset.title = b.title.toLowerCase();
   card.dataset.author = b.author.toLowerCase();
-  const catLabel = catMap[b.cat] ? catMap[b.cat].label : b.cat;
-  const spotExtra = b.spotlight ? `
-      <span class="spot-badge">✦ Nuestra selección</span>
-      <div class="spot-meta">
-        <span class="spot-cat">${catLabel}</span>
-        <span class="spot-price">$${b.price}</span>
-      </div>
-      <div class="spot-actions">
-        <a href="${buyLink(b)}" target="_blank" rel="noopener" class="go-buy">Comprar por WhatsApp</a>
-        <a href="${b.url}" target="_blank" rel="noopener" class="go-detail-alt">Ver detalle</a>
-      </div>` : '';
+  const meta = catMap[b.cat];
+  const catLabel = meta ? meta.label : b.cat;
+  const catIcon = meta ? meta.icon : '';
   card.innerHTML = `
     <div class="gcover">
       <img src="${b.img}" alt="${b.title} — ${b.author}" loading="lazy">
-      <span class="gtag">${catLabel}</span>
+      <span class="gtag">${catIcon} ${catLabel}</span>
       <span class="gprice">$${b.price}</span>
       <div class="goverlay">
         <a href="${buyLink(b)}" target="_blank" rel="noopener" class="go-buy">Comprar</a>
@@ -367,7 +346,6 @@ function makeCard(b){
     <div class="ginfo">
       <div class="gtitle">${b.title}</div>
       <div class="gauthor">${b.author}</div>
-      ${spotExtra}
     </div>`;
   return card;
 }
