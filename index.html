@@ -186,6 +186,16 @@ section{padding:96px 0}
 .book-detail:hover{border-color:var(--navy)}
 .novedades-more{text-align:center;margin-top:44px}
 
+/* ── AUTORES ── */
+#autores{background:var(--paper2)}
+.authors-grid{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-top:44px}
+.author-card{display:flex;flex-direction:column;align-items:center;text-align:center;width:170px;text-decoration:none;color:inherit;transition:transform .3s}
+.author-card:hover{transform:translateY(-4px)}
+.author-avatar{width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:#fff;margin-bottom:14px;box-shadow:0 10px 24px rgba(43,34,22,.18);transition:box-shadow .3s}
+.author-card:hover .author-avatar{box-shadow:0 14px 32px rgba(184,134,62,.4)}
+.author-name{font-family:'Fraunces',serif;font-weight:600;font-size:.92rem;color:var(--navy);margin-bottom:6px}
+.author-quote{font-size:.76rem;color:var(--muted);font-style:italic;line-height:1.55}
+
 /* ── COMO COMPRAR ── */
 #proceso{background:var(--paper)}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:56px;position:relative}
@@ -488,6 +498,18 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
   </div>
 </section>
 
+<!-- AUTORES -->
+<section id="autores">
+  <div class="container">
+    <div class="tc">
+      <span class="s-label reveal">Autores en nuestro catálogo</span>
+      <h2 class="s-title reveal">Las voces detrás de tus <em class="accent">próximas lecturas</em></h2>
+      <p class="s-desc reveal">Del romance a la novela histórica — conocé a algunos de los autores que forman parte de nuestra selección.</p>
+    </div>
+    <div class="authors-grid" id="authorsGrid"></div>
+  </div>
+</section>
+
 <!-- COMO COMPRAR -->
 <section id="proceso">
   <div class="container">
@@ -751,6 +773,20 @@ BOOKS.forEach((b, i) => {
     </div>`;
   card.querySelector('.book-buy').addEventListener('click', () => addToCart(b));
   grid.appendChild(card);
+  io.observe(card);
+});
+
+// ── AUTORES ──
+const authorsGrid = document.getElementById('authorsGrid');
+AUTHORS_DATA.forEach((a, i) => {
+  const card = document.createElement('a');
+  card.href = `catalogo.html?author=${encodeURIComponent(a.name)}`;
+  card.className = 'author-card reveal d' + ((i % 6) + 1);
+  card.innerHTML = `
+    <span class="author-avatar">${a.initials}</span>
+    <span class="author-name">${a.name}</span>
+    <span class="author-quote">"${a.quote}"</span>`;
+  authorsGrid.appendChild(card);
   io.observe(card);
 });
 

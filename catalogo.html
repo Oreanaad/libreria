@@ -110,6 +110,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:a
 .empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--muted)}
 .empty-state span{font-size:2.4rem;display:block;margin-bottom:14px}
 
+/* ── AUTORES ── */
+.authors-section{text-align:center;margin:0 0 70px}
+.authors-label{display:block;font-size:.78rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--forest);margin-bottom:14px}
+.authors-title{font-family:'Fraunces',serif;font-size:clamp(1.5rem,2.8vw,2rem);font-weight:600;color:var(--navy)}
+.authors-grid{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-top:40px}
+.author-card{display:flex;flex-direction:column;align-items:center;text-align:center;width:170px;text-decoration:none;color:inherit;cursor:pointer;transition:transform .3s;background:none;border:none;font-family:'Inter',sans-serif}
+.author-card:hover{transform:translateY(-4px)}
+.author-avatar{width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:#fff;margin-bottom:14px;box-shadow:0 10px 24px rgba(43,34,22,.18);transition:box-shadow .3s}
+.author-card:hover .author-avatar{box-shadow:0 14px 32px rgba(184,134,62,.4)}
+.author-name{font-family:'Fraunces',serif;font-weight:600;font-size:.92rem;color:var(--navy);margin-bottom:6px}
+.author-quote{font-size:.76rem;color:var(--muted);font-style:italic;line-height:1.55}
+
 .cat-cta{background:var(--paper2);border-radius:20px;padding:44px;text-align:center;margin:70px 0 90px}
 .cat-cta h3{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--navy);margin-bottom:10px}
 .cat-cta p{color:var(--muted);margin-bottom:26px;max-width:480px;margin-left:auto;margin-right:auto}
@@ -244,6 +256,12 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
 <div class="container">
   <div id="catGrid"></div>
 
+  <div class="authors-section">
+    <span class="authors-label">Autores en nuestro catálogo</span>
+    <h2 class="authors-title">Las voces detrás de tus <em class="accent">próximas lecturas</em></h2>
+    <div class="authors-grid" id="authorsGrid"></div>
+  </div>
+
   <div class="cat-cta">
     <h3>¿No encontraste tu próxima lectura?</h3>
     <p>Nuestro catálogo completo supera los 50.000 títulos. Escríbenos y te ayudamos a encontrar exactamente lo que buscas.</p>
@@ -327,14 +345,18 @@ const BOOKS = BOOKS_DATA;
 const catMap = Object.fromEntries(CATS.map(c => [c.slug, c]));
 
 // Deep-linking: catalogo.html?cat=novela or ?cat=infantil,dibujo (from homepage collection cards)
-const urlCats = new URLSearchParams(location.search).get('cat');
+const urlParams = new URLSearchParams(location.search);
+const urlCats = urlParams.get('cat');
+const urlAuthor = urlParams.get('author');
 let activeCats = new Set(urlCats ? urlCats.split(',').filter(Boolean) : ['todos']);
 let sortMode = 'relevancia';
-let searchTerm = '';
+let searchTerm = urlAuthor ? urlAuthor.toLowerCase() : '';
 
 if (!activeCats.has('todos')) {
   const labels = [...activeCats].map(slug => catMap[slug] ? catMap[slug].label : slug);
   document.getElementById('catTitle').innerHTML = `<em class="accent">${labels.join(' & ')}</em>`;
+} else if (urlAuthor) {
+  document.getElementById('catTitle').innerHTML = `Libros de <em class="accent">${urlAuthor}</em>`;
 }
 
 // ── BUILD PILLS ──
@@ -432,13 +454,37 @@ function render(){
     : `Mostrando ${list.length} de ${BOOKS.length} títulos seleccionados`;
 }
 
-document.getElementById('searchInput').addEventListener('input', e => {
+const searchInput = document.getElementById('searchInput');
+if (urlAuthor) searchInput.value = urlAuthor;
+searchInput.addEventListener('input', e => {
   searchTerm = e.target.value.trim().toLowerCase();
   render();
 });
 document.getElementById('sortSelect').addEventListener('change', e => {
   sortMode = e.target.value;
   render();
+});
+
+// ── AUTORES ──
+const authorsGrid = document.getElementById('authorsGrid');
+AUTHORS_DATA.forEach(a => {
+  const card = document.createElement('button');
+  card.type = 'button';
+  card.className = 'author-card';
+  card.innerHTML = `
+    <span class="author-avatar">${a.initials}</span>
+    <span class="author-name">${a.name}</span>
+    <span class="author-quote">"${a.quote}"</span>`;
+  card.addEventListener('click', () => {
+    searchInput.value = a.name;
+    searchTerm = a.name.toLowerCase();
+    activeCats = new Set(['todos']);
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    document.querySelector('.pill[data-slug="todos"]').classList.add('active');
+    render();
+    document.getElementById('toolbar').scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+  authorsGrid.appendChild(card);
 });
 
 render();
