@@ -25,12 +25,12 @@ const BOOKS_DATA = [
 
 // Recognized authors present in the catalog — quotes are short excerpts taken
 // verbatim (or lightly trimmed) from each book's real description above.
-// No author photos: avatars use initials until real, rights-cleared photos are supplied.
+// Photos: Wikimedia Commons (CC BY / CC BY-SA, credited below) and each
+// author's own official site. Credit must stay visible per the CC licenses.
 const AUTHORS_DATA = [
-  { name:'Ali Hazelwood', initials:'AH', book:'Caída Libre', quote:'Un ardiente romance universitario en aguas prohibidas.' },
-  { name:'Sarah J. Maas', initials:'SM', book:'A Court of Thorns and Roses', quote:'La serie número uno en ventas del New York Times.' },
-  { name:'George R.R. Martin', initials:'GM', book:'House of the Dragon', quote:'Los Targaryen reinaban a fuego y sangre.' },
-  { name:'Liz Tomforde', initials:'LT', book:'Windy City', quote:'Nunca imaginé que viviría con una superestrella de la NBA.' },
-  { name:'Andrea Frediani', initials:'AF', book:'Dictator', quote:'Amigos inseparables. Guerreros invencibles. Enemigos eternos.' },
-  { name:'Cazzu', initials:'CZ', book:'Perreo', quote:'La voz de Cazzu es única: el grito contenido de muchas que no tienen voz.' }
+  { name:'Ali Hazelwood', img:'assets/authors/ali-hazelwood.jpg', book:'Caída Libre', quote:'Un ardiente romance universitario en aguas prohibidas.', credit:'Larry D. Moore, CC BY 4.0' },
+  { name:'Sarah J. Maas', img:'assets/authors/sarah-j-maas.jpg', book:'A Court of Thorns and Roses', quote:'La serie número uno en ventas del New York Times.', credit:'Foto oficial, sarahjmaas.com' },
+  { name:'George R.R. Martin', img:'assets/authors/george-rr-martin.jpg', book:'House of the Dragon', quote:'Los Targaryen reinaban a fuego y sangre.', credit:'Gage Skidmore, CC BY-SA 4.0' },
+  { name:'Liz Tomforde', img:'assets/authors/liz-tomforde.jpg', book:'Windy City', quote:'Nunca imaginé que viviría con una superestrella de la NBA.', credit:'Foto oficial, liztomforde.com' },
+  { name:'Cazzu', img:'assets/authors/cazzu.jpg', book:'Perreo', quote:'La voz de Cazzu es única: el grito contenido de muchas que no tienen voz.', credit:'Tony Dandrades, CC BY 3.0' }
 ];

@@ -191,10 +191,12 @@ section{padding:96px 0}
 .authors-grid{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-top:44px}
 .author-card{display:flex;flex-direction:column;align-items:center;text-align:center;width:170px;text-decoration:none;color:inherit;transition:transform .3s}
 .author-card:hover{transform:translateY(-4px)}
-.author-avatar{width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:#fff;margin-bottom:14px;box-shadow:0 10px 24px rgba(43,34,22,.18);transition:box-shadow .3s}
+.author-avatar{width:80px;height:80px;border-radius:50%;overflow:hidden;margin-bottom:14px;box-shadow:0 10px 24px rgba(43,34,22,.18);transition:box-shadow .3s}
+.author-avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .author-card:hover .author-avatar{box-shadow:0 14px 32px rgba(184,134,62,.4)}
 .author-name{font-family:'Fraunces',serif;font-weight:600;font-size:.92rem;color:var(--navy);margin-bottom:6px}
 .author-quote{font-size:.76rem;color:var(--muted);font-style:italic;line-height:1.55}
+.authors-credit{font-size:.7rem;color:var(--muted);opacity:.75;margin-top:36px}
 
 /* ── COMO COMPRAR ── */
 #proceso{background:var(--paper)}
@@ -507,6 +509,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
       <p class="s-desc reveal">Del romance a la novela histórica — conocé a algunos de los autores que forman parte de nuestra selección.</p>
     </div>
     <div class="authors-grid" id="authorsGrid"></div>
+    <p class="authors-credit">Fotos: Wikimedia Commons (CC BY / CC BY-SA) y sitios oficiales de cada autora/autor.</p>
   </div>
 </section>
 
@@ -783,7 +786,7 @@ AUTHORS_DATA.forEach((a, i) => {
   card.href = `catalogo.html?author=${encodeURIComponent(a.name)}`;
   card.className = 'author-card reveal d' + ((i % 6) + 1);
   card.innerHTML = `
-    <span class="author-avatar">${a.initials}</span>
+    <span class="author-avatar"><img src="${a.img}" alt="${a.name}" loading="lazy"></span>
     <span class="author-name">${a.name}</span>
     <span class="author-quote">"${a.quote}"</span>`;
   authorsGrid.appendChild(card);
