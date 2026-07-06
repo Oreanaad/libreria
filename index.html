@@ -764,7 +764,13 @@ const FEATURED_TITLES = ['Caída Libre','A Court of Thorns and Roses — Colorin
 
 (async () => {
 const allBooks = await fetchBooks();
-const BOOKS = FEATURED_TITLES.map(t => allBooks.find(b => b.title === t)).filter(Boolean);
+// Prefer the curated titles, but only while they're in stock — a sold-out
+// pick is swapped for the next available title so the homepage always
+// showcases books clients can actually buy right now.
+const featured = FEATURED_TITLES.map(t => allBooks.find(b => b.title === t)).filter(Boolean);
+const inStockFeatured = featured.filter(b => b.stock > 0);
+const backfill = allBooks.filter(b => b.stock > 0 && !inStockFeatured.includes(b));
+const BOOKS = inStockFeatured.concat(backfill).slice(0, FEATURED_TITLES.length);
 
 const grid = document.getElementById('bookGrid');
 BOOKS.forEach((b, i) => {
