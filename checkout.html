@@ -130,7 +130,7 @@ const WA_NUMBER_CHECKOUT = '584145962337';
 
 const DELIVERY_METHODS = [
   { value: 'delivery-valencia', label: 'Delivery en Valencia', needsAddress: true },
-  { value: 'envio-nacional', label: 'Envío nacional (Zoom o MRW)', needsAddress: true },
+  { value: 'envio-nacional', label: 'Envío nacional (Zoom o MRW)', needsAgency: true },
   { value: 'retiro-valencia', label: 'Retiro en tienda — C.C. Mediterránea Plaza, Valencia', needsAddress: false },
   { value: 'retiro-maracay', label: 'Retiro en Maracay (Cafebrería)', needsAddress: false }
 ];
@@ -203,6 +203,18 @@ function renderCheckout(cart) {
           <input type="text" id="cAddress" placeholder="Calle, referencia, ciudad">
           <p class="f-hint">Delivery en Valencia: lunes a viernes 9am–5pm, sábados 9am–2:30pm.</p>
         </div>
+        <div class="f-row" id="agencyRow">
+          <div class="f-2col">
+            <div>
+              <label>Agencia</label>
+              <input type="text" id="cAgency" placeholder="Ej: Zoom La Trigaleña">
+            </div>
+            <div>
+              <label>Ubicación</label>
+              <input type="text" id="cLocation" placeholder="Ciudad / estado de destino">
+            </div>
+          </div>
+        </div>
 
         <div class="form-section-title">Pago</div>
         <div class="f-row">
@@ -229,10 +241,14 @@ function renderCheckout(cart) {
 
   const deliverySelect = document.getElementById('cDelivery');
   const addressRow = document.getElementById('addressRow');
+  const agencyRow = document.getElementById('agencyRow');
   function toggleAddress() {
     const method = DELIVERY_METHODS.find(m => m.value === deliverySelect.value);
     addressRow.style.display = method && method.needsAddress ? '' : 'none';
     document.getElementById('cAddress').required = !!(method && method.needsAddress);
+    agencyRow.style.display = method && method.needsAgency ? '' : 'none';
+    document.getElementById('cAgency').required = !!(method && method.needsAgency);
+    document.getElementById('cLocation').required = !!(method && method.needsAgency);
   }
   deliverySelect.addEventListener('change', toggleAddress);
   toggleAddress();
@@ -249,6 +265,8 @@ function buildWaText(cart, shipping) {
   if (shipping.email) text += `\nEmail: ${shipping.email}`;
   text += `\n\n*Entrega*: ${deliveryLabel}`;
   if (shipping.address) text += `\nDirección: ${shipping.address}`;
+  if (shipping.agency) text += `\nAgencia: ${shipping.agency}`;
+  if (shipping.location) text += `\nUbicación: ${shipping.location}`;
   text += `\n\n*Pago*: ${shipping.payMethod}`;
   text += `\n\n*Pedido*\n${lines}\n\nTotal: $${total.toFixed(2)}`;
   if (shipping.notes) text += `\n\n*Notas*: ${shipping.notes}`;
@@ -267,6 +285,8 @@ async function onSubmit(e) {
     email: document.getElementById('cEmail').value.trim(),
     delivery: document.getElementById('cDelivery').value,
     address: document.getElementById('cAddress').value.trim(),
+    agency: document.getElementById('cAgency').value.trim(),
+    location: document.getElementById('cLocation').value.trim(),
     payMethod: (document.querySelector('input[name="payMethod"]:checked') || {}).value,
     notes: document.getElementById('cNotes').value.trim()
   };

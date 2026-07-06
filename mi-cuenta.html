@@ -159,6 +159,8 @@ async function loadOrders() {
         <div class="order-shipping">
           <span>📦 ${DELIVERY_LABELS[o.shipping.delivery] || o.shipping.delivery || ''}</span>
           ${o.shipping.address ? `<span>📍 ${o.shipping.address}</span>` : ''}
+          ${o.shipping.agency ? `<span>🏢 ${o.shipping.agency}</span>` : ''}
+          ${o.shipping.location ? `<span>📍 ${o.shipping.location}</span>` : ''}
           ${o.shipping.payMethod ? `<span>💳 ${o.shipping.payMethod}</span>` : ''}
         </div>` : ''}
         <div class="order-total">
