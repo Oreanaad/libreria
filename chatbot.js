@@ -312,7 +312,7 @@ function init() {
   style.textContent = STYLE;
   document.head.appendChild(style);
 
-  const btn = el('button', 'flea-btn', '💬');
+  const btn = el('button', 'flea-btn', '📚');
   btn.type = 'button';
   btn.id = 'fleaBtn';
   btn.setAttribute('aria-label', 'Asistente de libros');
