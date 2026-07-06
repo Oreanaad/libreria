@@ -92,20 +92,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:a
 .gcard:hover{transform:translateY(-6px);box-shadow:0 24px 44px rgba(43,34,22,.16);border-color:var(--sage)}
 .gcard.hide{display:none}
 
-.gcover{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--paper2)}
+.gcover{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--paper2);display:block}
 .gcover img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
-.gcard:hover .gcover img{transform:scale(1.07)}
+.gcard:hover .gcover img{transform:scale(1.05)}
 .gtag{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:4px;background:rgba(254,253,251,.94);color:var(--forest);font-size:.62rem;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:4px 10px 4px 8px;border-radius:100px;z-index:2}
-.gprice{position:absolute;top:10px;right:10px;background:var(--navy);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:.8rem;padding:4px 11px;border-radius:100px;z-index:2}
-.goverlay{position:absolute;inset:auto 0 0 0;display:flex;gap:7px;padding:11px;background:linear-gradient(0deg,rgba(28,22,16,.9),transparent);transform:translateY(100%);transition:transform .3s ease;z-index:2}
-.gcard:hover .goverlay{transform:translateY(0)}
-.goverlay a,.goverlay button{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:opacity .2s;border:none;font-family:'Inter',sans-serif;cursor:pointer}
-.go-buy{background:var(--forest);color:#fff}
-.go-buy:hover{opacity:.88}
-.go-detail{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35)}
-.ginfo{padding:13px 14px 15px}
+.ginfo{padding:13px 14px 15px;display:flex;flex-direction:column;flex:1}
 .gtitle{font-family:'Fraunces',serif;font-size:.86rem;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .gauthor{font-size:.7rem;color:var(--muted)}
+.gprice{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;color:var(--navy);margin:9px 0 10px}
+.gactions{display:flex;gap:7px;margin-top:auto}
+.gactions a,.gactions button{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:all .2s;border:none;font-family:'Inter',sans-serif;cursor:pointer}
+.go-buy{background:var(--forest);color:#fff}
+.go-buy:hover{opacity:.88}
+.go-detail{background:var(--paper2);color:var(--navy);border:1px solid var(--border)}
+.go-detail:hover{border-color:var(--navy)}
 
 .empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--muted)}
 .empty-state span{font-size:2.4rem;display:block;margin-bottom:14px}
@@ -285,6 +285,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
   </div>
 </footer>
 
+<script src="books-data.js"></script>
 <script src="cart.js"></script>
 <script>
 const WA_NUMBER = '584145962337';
@@ -320,29 +321,8 @@ const CATS = [
   { slug:'entretenimiento', label:'Entretenimiento', icon:'🧩' }
 ];
 
-// ── REAL CATALOG DATA (from booksflea.com) ──
-const BOOKS = [
-  { title:'Caída Libre', author:'Ali Hazelwood', price:30, cat:'novela', img:'assets/book-caida-libre.jpg', url:'https://booksflea.com/novela/caida-libre/' },
-  { title:'A Court of Thorns and Roses — Coloring Book', author:'Sarah J. Maas', price:25, cat:'fantasia', img:'assets/book-acotar-coloring.jpg', url:'https://booksflea.com/fantasia/a-court-of-thorns-and-roses-the-official-coloring-book/' },
-  { title:'Windy City 2: Jugando Fuerte', author:'Liz Tomforde', price:39, cat:'novela', img:'assets/book-windycity2.webp', url:'https://booksflea.com/novela/windy-city-2-jugando-fuerte-the-right-move/' },
-  { title:'Windy City 1: Rozando el Cielo', author:'Liz Tomforde', price:39, cat:'novela', img:'assets/book-windycity1.jpg', url:'https://booksflea.com/novela/rozando-el-cielo/' },
-  { title:'Capybara Zen', author:'Helen H. Wu', price:20, cat:'dibujo', img:'assets/book-capybara-zen.jpg', url:'https://booksflea.com/dibujo/capybara-zen-a-story-and-coloring-book/' },
-  { title:'Un Año Iluminado', author:'Patricia López Caballero', price:22, cat:'autoayuda-y-espiritualidad', img:'assets/book-ano-iluminado.jpg', url:'https://booksflea.com/autoayuda-y-espiritualidad/un-ano-iluminado/' },
-  { title:'Dictator I: La Sombra de Julio César', author:'Andrea Frediani', price:25, cat:'ficcion-historica', img:'assets/book-dictator1.jpg', url:'https://booksflea.com/ficcion-historica/la-sombra-de-julio-cesar/' },
-  { title:'Dictator II: El Enemigo de Julio César', author:'Andrea Frediani', price:25, cat:'novela', img:'assets/book-dictator2.webp', url:'https://booksflea.com/novela/el-enemigo-de-julio-cesar/' },
-  { title:'Dictator III: El Triunfo de Julio César', author:'Andrea Frediani', price:25, cat:'novela', img:'assets/book-dictator3.jpg', url:'https://booksflea.com/novela/el-triunfo-de-julio-cesar/' },
-  { title:'A Un Paso de Ti', author:'Hannah Bonam-Young', price:36, cat:'novela', img:'assets/book-un-paso-de-ti.webp', url:'https://booksflea.com/novela/a-un-paso-de-ti/' },
-  { title:'House of the Dragon — Coloring Book', author:'George R.R. Martin', price:25, cat:'fantasia', img:'assets/book-hotd-coloring.jpg', url:'https://booksflea.com/fantasia/house-of-the-dragon-the-official-coloring-book/' },
-  { title:'A Game of Thrones — Coloring Book', author:'George R.R. Martin', price:25, cat:'fantasia', img:'assets/book-got-coloring.jpg', url:'https://booksflea.com/fantasia/a-game-of-thrones-the-official-coloring-book/' },
-  { title:'The Unofficial Bridgerton — Coloring Books', author:'Sara Richard', price:22, cat:'dibujo', img:'assets/book-bridgerton-coloring.jpg', url:'https://booksflea.com/dibujo/the-unofficial-bridgerton-coloring-books/' },
-  { title:'Netter. Cuaderno de Neurociencia para Colorear', author:'Mary Summo Maida', price:42, cat:'dibujo', img:'assets/book-netter-neuro.jpg', url:'https://booksflea.com/dibujo/netter-cuaderno-de-neurociencia-para-colorear/' },
-  { title:'Netter. Cuaderno de Anatomía para Colorear', author:'John T. Hansen', price:42, cat:'anatomia', img:'assets/book-netter-anatomia.jpg', url:'https://booksflea.com/anatomia/netter-cuaderno-de-anatomia-para-colorear/' },
-  { title:'Harry Potter Glow in the Dark — Coloring Book', author:'Wizarding World', price:22, cat:'arte', img:'assets/book-hp-glow.jpg', url:'https://booksflea.com/arte/harry-potter-glow-in-the-dark/' },
-  { title:'Perreo', author:'Cazzu', price:36, cat:'arte', img:'assets/book-perreo.webp', url:'https://booksflea.com/arte/perreo/' },
-  { title:'Capivibes — Coloring Book', author:'Gabriel Dearo', price:20, cat:'infantil', img:'assets/book-capivibes.webp', url:'https://booksflea.com/infantil/capivibes/' },
-  { title:'Murdoku: 80 Acertijos de Lógica y Asesinatos', author:'Manuel Garand', price:20, cat:'entretenimiento', img:'assets/book-murdoku.jpg', url:'https://booksflea.com/entretenimiento/murdoku-80-acertijos-de-logica-y-asesinatos/' },
-  { title:'Un Amigo Gratis', author:'Inma Rubiales', price:25, cat:'novela', img:'assets/book-amigo-gratis.jpg', url:'https://booksflea.com/novela/un-amigo-gratis/' }
-];
+// ── REAL CATALOG DATA (from booksflea.com, shared via books-data.js) ──
+const BOOKS = BOOKS_DATA;
 
 const catMap = Object.fromEntries(CATS.map(c => [c.slug, c]));
 
@@ -389,18 +369,18 @@ function makeCard(b){
   const catLabel = meta ? meta.label : b.cat;
   const catIcon = meta ? meta.icon : '';
   card.innerHTML = `
-    <div class="gcover">
+    <a href="libro.html?slug=${b.slug}" class="gcover">
       <img src="${b.img}" alt="${b.title} — ${b.author}" loading="lazy">
       <span class="gtag">${catIcon} ${catLabel}</span>
-      <span class="gprice">$${b.price}</span>
-      <div class="goverlay">
-        <button type="button" class="go-buy">Añadir 🛒</button>
-        <a href="${b.url}" target="_blank" rel="noopener" class="go-detail">Detalle</a>
-      </div>
-    </div>
+    </a>
     <div class="ginfo">
       <div class="gtitle">${b.title}</div>
       <div class="gauthor">${b.author}</div>
+      <div class="gprice">$${b.price}</div>
+      <div class="gactions">
+        <button type="button" class="go-buy">Añadir 🛒</button>
+        <a href="libro.html?slug=${b.slug}" class="go-detail">Detalle</a>
+      </div>
     </div>`;
   card.querySelector('.go-buy').addEventListener('click', () => addToCart(b));
   return card;

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Detalle del libro — Booksflea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,500;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --paper:#FEFDFB;
+  --paper2:#F3E9D7;
+  --card:#FFFFFF;
+  --navy:#2B2216;
+  --navy-deep:#1C1610;
+  --forest:#B8863E;
+  --sage:#D8B879;
+  --olive:#C9A15B;
+  --tan:#E8CE9E;
+  --leather:#8F6A2E;
+  --ink:#2E2820;
+  --muted:#746754;
+  --border:rgba(184,134,62,.24);
+  --grad:linear-gradient(135deg,#8A6A35,#B8894B);
+}
+
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--sage) var(--paper2)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--paper2)}
+::-webkit-scrollbar-thumb{background:var(--sage);border-radius:3px}
+
+body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;line-height:1.65}
+.container{max-width:1120px;margin:0 auto;padding:0 24px}
+.serif{font-family:'Fraunces',serif}
+.accent{color:var(--forest);font-style:italic}
+
+/* ── NAV (shared) ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:all .35s ease;background:rgba(254,253,251,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:1.5rem;letter-spacing:.5px;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo em{font-style:italic;color:var(--forest)}
+.nav-links{display:flex;gap:30px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;letter-spacing:.2px;transition:color .3s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:2px;background:var(--forest);transition:width .3s ease}
+.nav-links a:hover{color:var(--navy)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{background:var(--grad);color:#fff;padding:10px 22px;border-radius:100px;font-weight:700;font-size:.85rem;text-decoration:none;letter-spacing:.3px;transition:opacity .3s,transform .2s;white-space:nowrap}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;border:none;background:none;padding:4px}
+.hamburger span{width:24px;height:2px;background:var(--navy);border-radius:2px;transition:all .3s;display:block}
+.hamburger.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── DETAIL ── */
+#detail{padding:130px 0 40px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;margin-bottom:32px;transition:color .2s}
+.back-link:hover{color:var(--navy)}
+.detail-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:start}
+.detail-cover{position:relative;border-radius:18px;overflow:hidden;box-shadow:0 30px 60px rgba(43,34,22,.18);aspect-ratio:3/4;background:var(--paper2)}
+.detail-cover img{width:100%;height:100%;object-fit:cover}
+.detail-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(184,134,62,.1);border:1px solid rgba(184,134,62,.3);color:var(--forest);font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:18px}
+.detail-title{font-family:'Fraunces',serif;font-size:clamp(1.7rem,3.2vw,2.4rem);font-weight:600;line-height:1.15;color:var(--navy);margin-bottom:8px}
+.detail-author{font-size:1rem;color:var(--muted);margin-bottom:22px}
+.detail-price{font-family:'Fraunces',serif;font-weight:700;font-size:2.1rem;color:var(--navy);margin-bottom:26px}
+.detail-desc{font-size:.98rem;color:var(--ink);line-height:1.9;margin-bottom:32px;max-width:56ch}
+.detail-actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.btn-primary{background:var(--grad);color:#fff;padding:15px 30px;border-radius:100px;font-weight:700;font-size:.92rem;text-decoration:none;letter-spacing:.3px;transition:all .3s;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(43,34,22,.28)}
+.btn-outline{background:transparent;color:var(--navy);padding:15px 30px;border-radius:100px;font-weight:700;font-size:.92rem;text-decoration:none;letter-spacing:.3px;border:1.5px solid var(--navy);transition:all .3s;display:inline-flex;align-items:center;gap:8px}
+.btn-outline:hover{background:var(--navy);color:#fff;transform:translateY(-3px)}
+.detail-external{font-size:.85rem;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:2px;transition:color .2s}
+.detail-external:hover{color:var(--forest)}
+
+.not-found{text-align:center;padding:60px 20px}
+.not-found span{font-size:2.6rem;display:block;margin-bottom:18px}
+.not-found h2{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--navy);margin-bottom:10px}
+.not-found p{color:var(--muted);margin-bottom:26px}
+
+/* ── RELATED ── */
+#related{padding:60px 0 100px}
+.related-label{font-size:.78rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--forest);margin-bottom:8px;display:block}
+.related-title{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;color:var(--navy);margin-bottom:32px}
+.related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.rcard{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .3s,box-shadow .3s}
+.rcard:hover{transform:translateY(-5px);box-shadow:0 20px 40px rgba(43,34,22,.14)}
+.rcard-cover{aspect-ratio:3/4;overflow:hidden;background:var(--paper2)}
+.rcard-cover img{width:100%;height:100%;object-fit:cover}
+.rcard-info{padding:12px 14px 14px}
+.rcard-title{font-family:'Fraunces',serif;font-size:.84rem;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rcard-price{font-size:.78rem;color:var(--leather);font-weight:700;margin-top:4px}
+
+/* ── FOOTER / WHATSAPP / CART (shared) ── */
+footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
+.foot-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.foot-logo{font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;letter-spacing:.3px;color:#fff}
+.foot-copy{font-size:.8rem}
+.foot-links{display:flex;gap:22px;list-style:none}
+.foot-links a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.8rem;transition:color .3s}
+.foot-links a:hover{color:#fff}
+.wa-btn{position:fixed;bottom:24px;right:24px;z-index:9990;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 22px rgba(37,211,102,.4);transition:transform .3s,box-shadow .3s;text-decoration:none}
+.wa-btn:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(37,211,102,.55)}
+
+.cart-btn{position:relative;background:transparent;border:1.5px solid var(--navy);color:var(--navy);width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;flex-shrink:0}
+.cart-btn:hover{background:var(--navy);color:#fff}
+.cart-badge{position:absolute;top:-6px;right:-6px;background:var(--forest);color:#fff;font-size:.62rem;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--paper)}
+.cart-overlay{position:fixed;inset:0;background:rgba(28,22,16,.5);z-index:9995;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease}
+.cart-overlay.open{opacity:1;visibility:visible}
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:400px;max-width:92vw;background:var(--paper);z-index:9996;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.22,1,.36,1);box-shadow:-20px 0 60px rgba(28,22,16,.25)}
+.cart-drawer.open{transform:translateX(0)}
+.cart-header{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--border)}
+.cart-header h3{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--navy);font-weight:600}
+.cart-close{background:none;border:none;font-size:1.1rem;color:var(--muted);cursor:pointer;padding:6px;line-height:1;transition:color .2s}
+.cart-close:hover{color:var(--navy)}
+.cart-items{flex:1;overflow-y:auto;padding:16px 20px}
+.cart-empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:.9rem;line-height:1.7}
+.cart-empty span{font-size:2.2rem;display:block;margin-bottom:14px}
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.cart-item img{width:52px;height:70px;object-fit:cover;border-radius:6px;flex-shrink:0}
+.cart-item-info{flex:1;min-width:0}
+.cart-item-title{font-family:'Fraunces',serif;font-size:.86rem;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:2px}
+.cart-item-author{font-size:.72rem;color:var(--muted);margin-bottom:8px}
+.cart-item-qty{display:inline-flex;align-items:center;gap:10px;background:var(--paper2);border-radius:100px;padding:4px 10px}
+.cart-item-qty button{background:none;border:none;color:var(--navy);font-size:.9rem;font-weight:700;cursor:pointer;width:18px;line-height:1}
+.cart-item-qty span{font-size:.8rem;font-weight:600;min-width:14px;text-align:center}
+.cart-item-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between}
+.cart-item-price{font-family:'Fraunces',serif;font-weight:700;color:var(--navy);font-size:.86rem}
+.cart-item-remove{background:none;border:none;color:var(--muted);font-size:.68rem;text-decoration:underline;cursor:pointer;padding:0}
+.cart-item-remove:hover{color:var(--leather)}
+.cart-footer{padding:20px 24px;border-top:1px solid var(--border);background:var(--card)}
+.cart-subtotal{display:flex;justify-content:space-between;align-items:center;font-size:.95rem;color:var(--navy);margin-bottom:16px}
+.cart-subtotal span:last-child{font-family:'Fraunces',serif;font-weight:700;font-size:1.3rem}
+.cart-checkout-btn{width:100%;text-align:center;justify-content:center}
+.cart-checkout-btn.disabled{opacity:.4;pointer-events:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .detail-grid{grid-template-columns:1fr;gap:32px}
+  .detail-cover{max-width:340px;margin:0 auto}
+  .related-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:820px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  nav .nav-cta{display:none}
+}
+@media(max-width:560px){
+  #detail{padding:110px 0 20px}
+  .detail-actions{flex-direction:column;align-items:stretch}
+  .related-grid{grid-template-columns:1fr 1fr;gap:14px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">📖 Books<em>flea</em></a>
+      <ul class="nav-links">
+        <li><a href="index.html#sobre">Nosotros</a></li>
+        <li><a href="index.html#colecciones">Colecciones</a></li>
+        <li><a href="catalogo.html">Catálogo</a></li>
+        <li><a href="index.html#proceso">Cómo comprar</a></li>
+        <li><a href="index.html#visitanos">Visítanos</a></li>
+        <li><a href="index.html#contacto">Contacto</a></li>
+      </ul>
+      <button class="cart-btn" id="cartBtn" aria-label="Carrito">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <a href="catalogo.html" class="nav-cta">Ver catálogo</a>
+      <button class="hamburger" id="hamburger" aria-label="Menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- DETAIL -->
+<section id="detail">
+  <div class="container">
+    <a href="catalogo.html" class="back-link">← Volver al catálogo</a>
+    <div id="detailContent"></div>
+  </div>
+</section>
+
+<!-- RELATED -->
+<section id="related" style="display:none">
+  <div class="container">
+    <span class="related-label">Más de esta colección</span>
+    <h2 class="related-title">También te puede interesar</h2>
+    <div class="related-grid" id="relatedGrid"></div>
+  </div>
+</section>
+
+<!-- CART -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>Tu carrito</h3>
+    <button class="cart-close" id="cartClose" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">$0</span></div>
+    <a href="#" id="cartCheckout" target="_blank" rel="noopener" class="btn-primary cart-checkout-btn disabled">Finalizar por WhatsApp →</a>
+  </div>
+</aside>
+
+<!-- WHATSAPP FLOAT -->
+<a class="wa-btn" id="floatWa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container foot-inner">
+    <span class="foot-logo">📖 Booksflea</span>
+    <p class="foot-copy">Rif. J-50127757-5 · © 2026 Booksflea. Todos los derechos reservados.</p>
+    <ul class="foot-links">
+      <li><a href="https://booksflea.com/" target="_blank" rel="noopener">Tienda</a></li>
+      <li><a href="index.html#contacto">Contacto</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="books-data.js"></script>
+<script src="cart.js"></script>
+<script>
+const WA_NUMBER = '584145962337';
+function waLink(text){ return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`; }
+document.getElementById('floatWa').href = waLink('Hola Booksflea 👋 Quisiera más información sobre su catálogo de libros.');
+
+// ── HAMBURGER ──
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.querySelector('.nav-links');
+let menuOpen = false;
+function openMenu(){
+  menuOpen = true; hamburger.classList.add('active');
+  Object.assign(navLinks.style, {
+    display:'flex', flexDirection:'column', position:'fixed', top:'62px', left:'0', right:'0',
+    background:'rgba(254,253,251,.98)', backdropFilter:'blur(16px)', padding:'26px 24px',
+    borderBottom:'1px solid rgba(184,134,62,.24)', gap:'20px', zIndex:'999'
+  });
+}
+function closeMenu(){ menuOpen = false; hamburger.classList.remove('active'); navLinks.removeAttribute('style'); }
+hamburger.addEventListener('click', () => menuOpen ? closeMenu() : openMenu());
+
+// ── CATEGORY METADATA ──
+const CATS = {
+  novela:'Novela y Narrativa', fantasia:'Fantasía', dibujo:'Dibujo y Coloring', arte:'Arte',
+  infantil:'Infantil', 'autoayuda-y-espiritualidad':'Autoayuda', anatomia:'Anatomía',
+  'ficcion-historica':'Ficción Histórica', entretenimiento:'Entretenimiento'
+};
+
+// ── LOAD BOOK FROM SLUG ──
+const slug = new URLSearchParams(location.search).get('slug');
+const book = BOOKS_DATA.find(b => b.slug === slug);
+const contentEl = document.getElementById('detailContent');
+
+if (!book) {
+  contentEl.innerHTML = `
+    <div class="not-found">
+      <span>📭</span>
+      <h2>No encontramos este libro</h2>
+      <p>Puede que el enlace esté roto o el título ya no esté en esta selección.</p>
+      <a href="catalogo.html" class="btn-primary">Ver catálogo completo →</a>
+    </div>`;
+} else {
+  document.getElementById('pageTitle').textContent = `${book.title} — Booksflea`;
+  const catLabel = CATS[book.cat] || book.cat;
+  const buyText = `Hola Booksflea 👋 Quiero comprar:\n*${book.title}* — $${book.price}\n${book.url}\n\n¡Gracias!`;
+
+  contentEl.innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-cover"><img src="${book.img}" alt="${book.title} — ${book.author}"></div>
+      <div>
+        <span class="detail-tag">${catLabel}</span>
+        <h1 class="detail-title">${book.title}</h1>
+        <p class="detail-author">${book.author}</p>
+        <div class="detail-price">$${book.price}</div>
+        <p class="detail-desc">${book.desc || 'Descripción no disponible por el momento — escríbenos y te contamos más sobre este título.'}</p>
+        <div class="detail-actions">
+          <button type="button" class="btn-primary" id="detailAddCart">Añadir al carrito 🛒</button>
+          <a href="${waLink(buyText)}" target="_blank" rel="noopener" class="btn-outline">Comprar ahora por WhatsApp</a>
+        </div>
+        <a href="${book.url}" target="_blank" rel="noopener" class="detail-external">Ver ficha completa en booksflea.com ↗</a>
+      </div>
+    </div>`;
+
+  document.getElementById('detailAddCart').addEventListener('click', () => addToCart(book));
+
+  const related = BOOKS_DATA.filter(b => b.cat === book.cat && b.slug !== book.slug).slice(0, 4);
+  if (related.length) {
+    document.getElementById('related').style.display = '';
+    const relatedGrid = document.getElementById('relatedGrid');
+    relatedGrid.innerHTML = related.map(b => `
+      <a href="libro.html?slug=${b.slug}" class="rcard">
+        <div class="rcard-cover"><img src="${b.img}" alt="${b.title}" loading="lazy"></div>
+        <div class="rcard-info">
+          <div class="rcard-title">${b.title}</div>
+          <div class="rcard-price">$${b.price}</div>
+        </div>
+      </a>`).join('');
+  }
+}
+</script>
+</body>
+</html>

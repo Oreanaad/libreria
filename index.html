@@ -171,13 +171,13 @@ section{padding:96px 0}
 .book-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:52px}
 .book-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .3s,box-shadow .3s}
 .book-card:hover{transform:translateY(-6px);box-shadow:0 22px 46px rgba(43,34,22,.14)}
-.book-cover{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--paper)}
+.book-cover{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--paper);display:block}
 .book-cover img{width:100%;height:100%;object-fit:cover}
 .book-tag{position:absolute;top:10px;left:10px;background:rgba(254,253,251,.92);color:var(--forest);font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:3px 10px;border-radius:100px}
-.book-price{position:absolute;top:10px;right:10px;background:var(--navy);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:.85rem;padding:4px 11px;border-radius:100px}
 .book-info{padding:16px 16px 18px}
 .book-title{font-family:'Fraunces',serif;font-size:.92rem;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.book-author{font-size:.74rem;color:var(--muted);margin-bottom:14px}
+.book-author{font-size:.74rem;color:var(--muted)}
+.book-price{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;color:var(--navy);margin:9px 0 12px}
 .book-actions{display:flex;gap:8px}
 .book-actions a,.book-actions button{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:.72rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:all .25s;border:none;font-family:'Inter',sans-serif;cursor:pointer}
 .book-buy{background:var(--forest);color:#fff}
@@ -670,6 +670,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
   </div>
 </footer>
 
+<script src="books-data.js"></script>
 <script src="cart.js"></script>
 <script>
 const WA_NUMBER = '584145962337';
@@ -725,34 +726,27 @@ document.querySelectorAll('[data-target]').forEach(el => {
   obs.observe(el);
 });
 
-// ── BOOK GRID (real catalog sample) ──
-const BOOKS = [
-  { title:'Caída Libre', author:'Ali Hazelwood', price:30, cat:'Novela', img:'assets/book-caida-libre.jpg', url:'https://booksflea.com/novela/caida-libre/' },
-  { title:'A Court of Thorns and Roses — Coloring Book', author:'Sarah J. Maas', price:25, cat:'Fantasía', img:'assets/book-acotar-coloring.jpg', url:'https://booksflea.com/fantasia/a-court-of-thorns-and-roses-the-official-coloring-book/' },
-  { title:'Windy City 2: Jugando Fuerte', author:'Liz Tomforde', price:39, cat:'Novela', img:'assets/book-windycity2.webp', url:'https://booksflea.com/novela/windy-city-2-jugando-fuerte-the-right-move/' },
-  { title:'Capybara Zen', author:'Helen H. Wu', price:20, cat:'Dibujo', img:'assets/book-capybara-zen.jpg', url:'https://booksflea.com/dibujo/capybara-zen-a-story-and-coloring-book/' },
-  { title:'Un Año Iluminado', author:'Patricia López Caballero', price:22, cat:'Autoayuda', img:'assets/book-ano-iluminado.jpg', url:'https://booksflea.com/autoayuda-y-espiritualidad/un-ano-iluminado/' },
-  { title:'Dictator I: La Sombra de Julio César', author:'Andrea Frediani', price:25, cat:'Ficción histórica', img:'assets/book-dictator1.jpg', url:'https://booksflea.com/ficcion-historica/la-sombra-de-julio-cesar/' },
-  { title:'A Un Paso de Ti', author:'Hannah Bonam-Young', price:36, cat:'Novela', img:'assets/book-un-paso-de-ti.webp', url:'https://booksflea.com/novela/a-un-paso-de-ti/' },
-  { title:'House of the Dragon — Coloring Book', author:'George R.R. Martin', price:25, cat:'Fantasía', img:'assets/book-hotd-coloring.jpg', url:'https://booksflea.com/fantasia/house-of-the-dragon-the-official-coloring-book/' }
-];
+// ── BOOK GRID (real catalog sample, shared via books-data.js) ──
+const CAT_LABELS = { novela:'Novela', fantasia:'Fantasía', dibujo:'Dibujo', arte:'Arte', infantil:'Infantil', 'autoayuda-y-espiritualidad':'Autoayuda', anatomia:'Anatomía', 'ficcion-historica':'Ficción Histórica', entretenimiento:'Entretenimiento' };
+const FEATURED_TITLES = ['Caída Libre','A Court of Thorns and Roses — Coloring Book','Windy City 2: Jugando Fuerte','Capybara Zen','Un Año Iluminado','Dictator I: La Sombra de Julio César','A Un Paso de Ti','House of the Dragon — Coloring Book'];
+const BOOKS = FEATURED_TITLES.map(t => BOOKS_DATA.find(b => b.title === t)).filter(Boolean);
 
 const grid = document.getElementById('bookGrid');
 BOOKS.forEach((b, i) => {
   const card = document.createElement('div');
   card.className = 'book-card reveal d' + ((i % 6) + 1);
   card.innerHTML = `
-    <div class="book-cover">
+    <a href="libro.html?slug=${b.slug}" class="book-cover">
       <img src="${b.img}" alt="${b.title} — ${b.author}" loading="lazy">
-      <span class="book-tag">${b.cat}</span>
-      <span class="book-price">$${b.price}</span>
-    </div>
+      <span class="book-tag">${CAT_LABELS[b.cat] || b.cat}</span>
+    </a>
     <div class="book-info">
       <div class="book-title">${b.title}</div>
       <div class="book-author">${b.author}</div>
+      <div class="book-price">$${b.price}</div>
       <div class="book-actions">
         <button type="button" class="book-buy">Añadir 🛒</button>
-        <a href="${b.url}" target="_blank" rel="noopener" class="book-detail">Detalle</a>
+        <a href="libro.html?slug=${b.slug}" class="book-detail">Detalle</a>
       </div>
     </div>`;
   card.querySelector('.book-buy').addEventListener('click', () => addToCart(b));
