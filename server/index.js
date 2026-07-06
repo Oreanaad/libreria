@@ -136,6 +136,21 @@ app.get('/api/reviews/mine', authenticate, async (req, res) => {
   }
 });
 
+app.get('/api/reviews/summary', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT book_slug, ROUND(AVG(rating)::numeric, 1) AS avg_rating, COUNT(*) AS count
+       FROM reviews GROUP BY book_slug`
+    );
+    const summary = {};
+    result.rows.forEach(r => { summary[r.book_slug] = { avg: Number(r.avg_rating), count: Number(r.count) }; });
+    res.json({ summary });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al obtener el resumen de reseñas.' });
+  }
+});
+
 app.get('/api/reviews/book/:slug', async (req, res) => {
   try {
     const result = await pool.query(

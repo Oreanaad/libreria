@@ -99,7 +99,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:a
 .ginfo{padding:13px 14px 15px;display:flex;flex-direction:column;flex:1}
 .gtitle{font-family:'Fraunces',serif;font-size:.86rem;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .gauthor{font-size:.7rem;color:var(--muted)}
-.gprice{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;color:var(--navy);margin:9px 0 10px}
+.grating{font-size:.72rem;color:var(--forest);margin-top:4px;min-height:14px;letter-spacing:.3px}
+.grating .rstars{letter-spacing:1px}
+.gprice{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;color:var(--navy);margin:6px 0 10px}
 .gactions{display:flex;gap:7px;margin-top:auto}
 .gactions a,.gactions button{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:all .2s;border:none;font-family:'Inter',sans-serif;cursor:pointer}
 .go-buy{background:var(--forest);color:#fff}
@@ -405,6 +407,7 @@ function makeCard(b){
     <div class="ginfo">
       <div class="gtitle">${b.title}</div>
       <div class="gauthor">${b.author}</div>
+      <div class="grating" id="rating-${b.slug}"></div>
       <div class="gprice">$${b.price}</div>
       <div class="gactions">
         <button type="button" class="go-buy">Añadir 🛒</button>
@@ -495,6 +498,15 @@ AUTHORS_DATA.forEach(a => {
 });
 
 render();
+
+// ── RATINGS ON CARDS ──
+authFetch('/reviews/summary').then(data => {
+  Object.entries(data.summary).forEach(([slug, s]) => {
+    const el = document.getElementById(`rating-${slug}`);
+    if (!el) return;
+    el.innerHTML = `<span class="rstars">${'★'.repeat(Math.round(s.avg))}${'☆'.repeat(5 - Math.round(s.avg))}</span> ${s.avg} (${s.count})`;
+  });
+}).catch(err => console.error('No se pudo cargar el resumen de reseñas:', err.message));
 </script>
 </body>
 </html>
