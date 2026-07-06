@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS orders (
   items JSONB NOT NULL,
   total NUMERIC(10,2) NOT NULL,
   status TEXT NOT NULL DEFAULT 'pendiente',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  shipping JSONB
 );
 
 CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);

@@ -95,7 +95,7 @@ app.get('/api/me', authenticate, async (req, res) => {
 app.get('/api/orders', authenticate, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, items, total, status, created_at FROM orders WHERE user_id = $1 ORDER BY created_at DESC',
+      'SELECT id, items, total, status, shipping, created_at FROM orders WHERE user_id = $1 ORDER BY created_at DESC',
       [req.userId]
     );
     res.json({ orders: result.rows });
@@ -106,14 +106,14 @@ app.get('/api/orders', authenticate, async (req, res) => {
 });
 
 app.post('/api/orders', authenticate, async (req, res) => {
-  const { items, total } = req.body || {};
+  const { items, total, shipping } = req.body || {};
   if (!Array.isArray(items) || !items.length || typeof total !== 'number') {
     return res.status(400).json({ error: 'Pedido inválido.' });
   }
   try {
     const result = await pool.query(
-      'INSERT INTO orders (user_id, items, total) VALUES ($1, $2, $3) RETURNING id, items, total, status, created_at',
-      [req.userId, JSON.stringify(items), total]
+      'INSERT INTO orders (user_id, items, total, shipping) VALUES ($1, $2, $3, $4) RETURNING id, items, total, status, shipping, created_at',
+      [req.userId, JSON.stringify(items), total, shipping ? JSON.stringify(shipping) : null]
     );
     res.json({ order: result.rows[0] });
   } catch (e) {

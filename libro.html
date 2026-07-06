@@ -209,7 +209,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
   <div class="cart-items" id="cartItems"></div>
   <div class="cart-footer">
     <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">$0</span></div>
-    <a href="#" id="cartCheckout" target="_blank" rel="noopener" class="btn-primary cart-checkout-btn disabled">Finalizar por WhatsApp →</a>
+    <a href="#" id="cartCheckout" class="btn-primary cart-checkout-btn disabled">Continuar con la compra →</a>
   </div>
 </aside>
 
@@ -276,7 +276,6 @@ if (!book) {
 } else {
   document.getElementById('pageTitle').textContent = `${book.title} — Booksflea`;
   const catLabel = CATS[book.cat] || book.cat;
-  const buyText = `Hola Booksflea 👋 Quiero comprar:\n*${book.title}* — $${book.price}\n${book.url}\n\n¡Gracias!`;
 
   contentEl.innerHTML = `
     <div class="detail-grid">
@@ -289,13 +288,17 @@ if (!book) {
         <p class="detail-desc">${book.desc || 'Descripción no disponible por el momento — escríbenos y te contamos más sobre este título.'}</p>
         <div class="detail-actions">
           <button type="button" class="btn-primary" id="detailAddCart">Añadir al carrito 🛒</button>
-          <a href="${waLink(buyText)}" target="_blank" rel="noopener" class="btn-outline">Comprar ahora por WhatsApp</a>
+          <button type="button" class="btn-outline" id="detailBuyNow">Comprar ahora →</button>
         </div>
         <a href="${book.url}" target="_blank" rel="noopener" class="detail-external">Ver ficha completa en booksflea.com ↗</a>
       </div>
     </div>`;
 
   document.getElementById('detailAddCart').addEventListener('click', () => addToCart(book));
+  document.getElementById('detailBuyNow').addEventListener('click', () => {
+    addToCart(book);
+    location.href = 'checkout.html';
+  });
 
   const related = BOOKS_DATA.filter(b => b.cat === book.cat && b.slug !== book.slug).slice(0, 4);
   if (related.length) {

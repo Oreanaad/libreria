@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Booksflea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,500;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --paper:#FEFDFB;
+  --paper2:#F3E9D7;
+  --card:#FFFFFF;
+  --navy:#2B2216;
+  --navy-deep:#1C1610;
+  --forest:#B8863E;
+  --sage:#D8B879;
+  --tan:#E8CE9E;
+  --leather:#8F6A2E;
+  --ink:#2E2820;
+  --muted:#746754;
+  --border:rgba(184,134,62,.24);
+  --grad:linear-gradient(135deg,#8A6A35,#B8894B);
+}
+
+body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;line-height:1.65}
+.container{max-width:1080px;margin:0 auto;padding:0 24px}
+.serif{font-family:'Fraunces',serif}
+.accent{color:var(--forest);font-style:italic}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;background:rgba(254,253,251,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:1.5rem;letter-spacing:.5px;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo em{font-style:italic;color:var(--forest)}
+.nav-cta{background:var(--grad);color:#fff;padding:10px 22px;border-radius:100px;font-weight:700;font-size:.85rem;text-decoration:none;letter-spacing:.3px;transition:opacity .3s,transform .2s;white-space:nowrap}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
+
+/* CHECKOUT */
+#checkout{padding:130px 0 90px}
+.checkout-header{margin-bottom:40px}
+.checkout-eyebrow{display:block;font-size:.78rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
+.checkout-title{font-family:'Fraunces',serif;font-size:clamp(1.7rem,3.2vw,2.4rem);font-weight:600;color:var(--navy)}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;margin-bottom:24px;transition:color .2s}
+.back-link:hover{color:var(--navy)}
+
+.checkout-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:start}
+
+/* Order summary */
+.summary-box{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;position:sticky;top:110px}
+.summary-header{padding:20px 24px;border-bottom:1px solid var(--border);font-family:'Fraunces',serif;font-weight:600;color:var(--navy);font-size:1.05rem}
+.summary-items{padding:8px 24px}
+.summary-item{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)}
+.summary-item:last-child{border-bottom:none}
+.summary-item img{width:40px;height:54px;object-fit:cover;border-radius:5px;flex-shrink:0}
+.summary-item-info{flex:1;min-width:0}
+.summary-item-title{font-size:.84rem;font-weight:600;color:var(--navy);line-height:1.3}
+.summary-item-qty{font-size:.74rem;color:var(--muted);margin-top:2px}
+.summary-item-price{font-family:'Fraunces',serif;font-weight:700;color:var(--navy);font-size:.86rem;white-space:nowrap}
+.summary-totals{padding:16px 24px 24px;border-top:1px solid var(--border);margin-top:4px}
+.summary-row{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted);margin-bottom:8px}
+.summary-row.total{color:var(--navy);font-size:1rem;margin-top:10px;padding-top:14px;border-top:1px solid var(--border)}
+.summary-row.total b{font-family:'Fraunces',serif;font-size:1.4rem}
+
+/* Form */
+.checkout-form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px}
+.form-section-title{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);font-size:1rem;margin-bottom:20px}
+.form-section-title:not(:first-child){margin-top:30px}
+.f-row{margin-bottom:16px}
+.f-row label{display:block;font-size:.74rem;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase}
+.f-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.f-row input,.f-row select,.f-row textarea{width:100%;background:var(--paper2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-family:'Inter',sans-serif;font-size:.9rem;color:var(--ink);outline:none;transition:border-color .3s}
+.f-row input:focus,.f-row select:focus,.f-row textarea:focus{border-color:var(--forest)}
+.f-row textarea{min-height:80px;resize:vertical}
+.f-hint{font-size:.76rem;color:var(--muted);margin-top:6px;line-height:1.5}
+.pay-options{display:flex;flex-wrap:wrap;gap:8px}
+.pay-option{flex:1;min-width:120px}
+.pay-option input{position:absolute;opacity:0;pointer-events:none}
+.pay-option label{display:block;text-align:center;padding:10px 8px;border:1px solid var(--border);border-radius:8px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;text-transform:none;letter-spacing:0}
+.pay-option input:checked + label{background:var(--grad);border-color:transparent;color:#fff}
+.checkout-submit{width:100%;background:var(--grad);color:#fff;border:none;border-radius:100px;padding:16px;font-family:'Inter',sans-serif;font-size:.92rem;font-weight:700;letter-spacing:.3px;cursor:pointer;transition:all .3s;margin-top:28px}
+.checkout-submit:hover{opacity:.88;transform:translateY(-2px)}
+.checkout-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.checkout-note{font-size:.78rem;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+
+/* Empty / confirmation states */
+.state-box{text-align:center;padding:100px 20px;max-width:480px;margin:0 auto}
+.state-box span{font-size:2.8rem;display:block;margin-bottom:20px}
+.state-box h2{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--navy);margin-bottom:12px}
+.state-box p{color:var(--muted);margin-bottom:26px;line-height:1.7}
+.btn-primary{background:var(--grad);color:#fff;padding:14px 30px;border-radius:100px;font-weight:700;font-size:.9rem;text-decoration:none;letter-spacing:.3px;transition:all .3s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(43,34,22,.28)}
+
+@media(max-width:860px){
+  .checkout-grid{grid-template-columns:1fr;gap:32px}
+  .summary-box{position:static}
+}
+@media(max-width:600px){
+  #checkout{padding:110px 0 60px}
+  .checkout-form{padding:22px}
+  .f-2col{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">📖 Books<em>flea</em></a>
+      <a href="catalogo.html" class="nav-cta">Ver catálogo</a>
+    </div>
+  </div>
+</nav>
+
+<section id="checkout">
+  <div class="container" id="checkoutContainer">
+    <!-- filled by JS: empty state, form, or confirmation -->
+  </div>
+</section>
+
+<script src="auth.js"></script>
+<script src="cart.js"></script>
+<script>
+const container = document.getElementById('checkoutContainer');
+const WA_NUMBER_CHECKOUT = '584145962337';
+
+const DELIVERY_METHODS = [
+  { value: 'delivery-valencia', label: 'Delivery en Valencia', needsAddress: true },
+  { value: 'envio-nacional', label: 'Envío nacional (Zoom o MRW)', needsAddress: true },
+  { value: 'retiro-valencia', label: 'Retiro en tienda — C.C. Mediterránea Plaza, Valencia', needsAddress: false },
+  { value: 'retiro-maracay', label: 'Retiro en Maracay (Cafebrería)', needsAddress: false }
+];
+const PAYMENT_METHODS = ['Zelle', 'Pago Móvil', 'Binance', 'Transferencia nacional', 'Efectivo'];
+
+function renderEmpty() {
+  container.innerHTML = `
+    <div class="state-box">
+      <span>🛒</span>
+      <h2>Tu carrito está vacío</h2>
+      <p>Agregá algún libro desde el catálogo antes de continuar con la compra.</p>
+      <a href="catalogo.html" class="btn-primary">Ver catálogo →</a>
+    </div>`;
+}
+
+function renderCheckout(cart) {
+  const total = cartTotal(cart);
+  container.innerHTML = `
+    <a href="javascript:history.back()" class="back-link">← Volver</a>
+    <div class="checkout-header">
+      <span class="checkout-eyebrow">Checkout</span>
+      <h1 class="checkout-title">Confirmá tu <em class="accent">pedido</em></h1>
+    </div>
+    <div class="checkout-grid">
+      <div class="summary-box">
+        <div class="summary-header">Tu pedido</div>
+        <div class="summary-items">
+          ${cart.map(i => `
+            <div class="summary-item">
+              <img src="${i.img}" alt="${i.title}">
+              <div class="summary-item-info">
+                <div class="summary-item-title">${i.title}</div>
+                <div class="summary-item-qty">Cantidad: ${i.qty}</div>
+              </div>
+              <div class="summary-item-price">$${(i.price * i.qty).toFixed(2)}</div>
+            </div>`).join('')}
+        </div>
+        <div class="summary-totals">
+          <div class="summary-row"><span>Subtotal</span><span>$${total.toFixed(2)}</span></div>
+          <div class="summary-row total"><span>Total</span><b>$${total.toFixed(2)}</b></div>
+        </div>
+      </div>
+
+      <form class="checkout-form" id="checkoutForm">
+        <div class="form-section-title">Datos de contacto</div>
+        <div class="f-2col">
+          <div class="f-row">
+            <label>Nombre completo</label>
+            <input type="text" id="cName" required>
+          </div>
+          <div class="f-row">
+            <label>Teléfono / WhatsApp</label>
+            <input type="tel" id="cPhone" placeholder="0414 1234567" required>
+          </div>
+        </div>
+        <div class="f-row">
+          <label>Email (opcional)</label>
+          <input type="email" id="cEmail">
+        </div>
+
+        <div class="form-section-title">Entrega</div>
+        <div class="f-row">
+          <label>Método de entrega</label>
+          <select id="cDelivery" required>
+            ${DELIVERY_METHODS.map(m => `<option value="${m.value}">${m.label}</option>`).join('')}
+          </select>
+        </div>
+        <div class="f-row" id="addressRow">
+          <label>Dirección</label>
+          <input type="text" id="cAddress" placeholder="Calle, referencia, ciudad">
+          <p class="f-hint">Delivery en Valencia: lunes a viernes 9am–5pm, sábados 9am–2:30pm.</p>
+        </div>
+
+        <div class="form-section-title">Pago</div>
+        <div class="f-row">
+          <label>Método de pago preferido</label>
+          <div class="pay-options">
+            ${PAYMENT_METHODS.map((p, i) => `
+              <div class="pay-option">
+                <input type="radio" name="payMethod" id="pay${i}" value="${p}" ${i === 0 ? 'checked' : ''}>
+                <label for="pay${i}">${p}</label>
+              </div>`).join('')}
+          </div>
+          <p class="f-hint">Efectivo solo disponible para pickup o delivery en Valencia.</p>
+        </div>
+
+        <div class="f-row">
+          <label>Notas adicionales (opcional)</label>
+          <textarea id="cNotes" placeholder="Ej: preferís que te contactemos en la tarde, regalo para alguien, etc."></textarea>
+        </div>
+
+        <button type="submit" class="checkout-submit" id="checkoutSubmit">Confirmar pedido por WhatsApp →</button>
+        <p class="checkout-note">Al confirmar, se abre WhatsApp con todos los datos de tu pedido para que Booksflea coordine el pago y la entrega.</p>
+      </form>
+    </div>`;
+
+  const deliverySelect = document.getElementById('cDelivery');
+  const addressRow = document.getElementById('addressRow');
+  function toggleAddress() {
+    const method = DELIVERY_METHODS.find(m => m.value === deliverySelect.value);
+    addressRow.style.display = method && method.needsAddress ? '' : 'none';
+    document.getElementById('cAddress').required = !!(method && method.needsAddress);
+  }
+  deliverySelect.addEventListener('change', toggleAddress);
+  toggleAddress();
+
+  document.getElementById('checkoutForm').addEventListener('submit', onSubmit);
+}
+
+function buildWaText(cart, shipping) {
+  const total = cartTotal(cart);
+  const lines = cart.map((i, idx) => `${idx + 1}. *${i.title}*${i.qty > 1 ? ` (x${i.qty})` : ''} — $${(i.price * i.qty).toFixed(2)}`).join('\n');
+  const deliveryLabel = (DELIVERY_METHODS.find(m => m.value === shipping.delivery) || {}).label || shipping.delivery;
+  let text = `Hola Booksflea 👋 Quiero confirmar mi pedido:\n\n`;
+  text += `*Datos de contacto*\nNombre: ${shipping.name}\nTeléfono: ${shipping.phone}`;
+  if (shipping.email) text += `\nEmail: ${shipping.email}`;
+  text += `\n\n*Entrega*: ${deliveryLabel}`;
+  if (shipping.address) text += `\nDirección: ${shipping.address}`;
+  text += `\n\n*Pago*: ${shipping.payMethod}`;
+  text += `\n\n*Pedido*\n${lines}\n\nTotal: $${total.toFixed(2)}`;
+  if (shipping.notes) text += `\n\n*Notas*: ${shipping.notes}`;
+  text += `\n\n¡Gracias!`;
+  return text;
+}
+
+async function onSubmit(e) {
+  e.preventDefault();
+  const cart = getCart();
+  if (!cart.length) return renderEmpty();
+
+  const shipping = {
+    name: document.getElementById('cName').value.trim(),
+    phone: document.getElementById('cPhone').value.trim(),
+    email: document.getElementById('cEmail').value.trim(),
+    delivery: document.getElementById('cDelivery').value,
+    address: document.getElementById('cAddress').value.trim(),
+    payMethod: (document.querySelector('input[name="payMethod"]:checked') || {}).value,
+    notes: document.getElementById('cNotes').value.trim()
+  };
+
+  const btn = document.getElementById('checkoutSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Confirmando...';
+
+  const waLink = `https://wa.me/${WA_NUMBER_CHECKOUT}?text=${encodeURIComponent(buildWaText(cart, shipping))}`;
+
+  if (typeof isLoggedIn === 'function' && isLoggedIn()) {
+    try {
+      await authFetch('/orders', {
+        method: 'POST',
+        body: JSON.stringify({ items: cart, total: cartTotal(cart), shipping })
+      });
+    } catch (err) {
+      console.error('No se pudo guardar el pedido en la cuenta:', err.message);
+    }
+  }
+
+  saveCart([]);
+  window.open(waLink, '_blank', 'noopener');
+  renderConfirmation();
+}
+
+function renderConfirmation() {
+  container.innerHTML = `
+    <div class="state-box">
+      <span>✅</span>
+      <h2>¡Pedido confirmado!</h2>
+      <p>Te abrimos WhatsApp con todos los detalles. Si no se abrió, revisá que tu navegador no haya bloqueado la ventana emergente.</p>
+      <a href="catalogo.html" class="btn-primary">Seguir explorando →</a>
+    </div>`;
+}
+
+// ── INIT ──
+const initialCart = getCart();
+if (!initialCart.length) renderEmpty();
+else renderCheckout(initialCart);
+</script>
+</body>
+</html>

@@ -57,6 +57,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;background:r
 .order-items{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .order-item{display:flex;justify-content:space-between;font-size:.86rem;color:var(--ink)}
 .order-item span:first-child{color:var(--muted)}
+.order-shipping{display:flex;flex-wrap:wrap;gap:14px;font-size:.78rem;color:var(--muted);margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
 .order-total{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border)}
 .order-total b{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--navy)}
 
@@ -118,6 +119,13 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+const DELIVERY_LABELS = {
+  'delivery-valencia': 'Delivery en Valencia',
+  'envio-nacional': 'Envío nacional (Zoom o MRW)',
+  'retiro-valencia': 'Retiro en tienda — Valencia',
+  'retiro-maracay': 'Retiro en Maracay (Cafebrería)'
+};
+
 async function loadOrders() {
   const container = document.getElementById('ordersContainer');
   try {
@@ -147,6 +155,12 @@ async function loadOrders() {
               <span>$${(i.price * i.qty).toFixed(2)}</span>
             </div>`).join('')}
         </div>
+        ${o.shipping ? `
+        <div class="order-shipping">
+          <span>📦 ${DELIVERY_LABELS[o.shipping.delivery] || o.shipping.delivery || ''}</span>
+          ${o.shipping.address ? `<span>📍 ${o.shipping.address}</span>` : ''}
+          ${o.shipping.payMethod ? `<span>💳 ${o.shipping.payMethod}</span>` : ''}
+        </div>` : ''}
         <div class="order-total">
           <span>Total</span>
           <b>$${Number(o.total).toFixed(2)}</b>
