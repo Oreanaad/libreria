@@ -27,7 +27,7 @@
 }
 
 body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;line-height:1.65}
-.container{max-width:900px;margin:0 auto;padding:0 24px}
+.container{max-width:1000px;margin:0 auto;padding:0 24px}
 .serif{font-family:'Fraunces',serif}
 .accent{color:var(--forest);font-style:italic}
 
@@ -43,11 +43,32 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;background:r
 
 /* ACCOUNT */
 #account{padding:130px 0 90px}
-.account-header{margin-bottom:44px}
+.account-header{margin-bottom:36px}
 .account-eyebrow{display:block;font-size:.78rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
 .account-title{font-family:'Fraunces',serif;font-size:clamp(1.7rem,3.2vw,2.4rem);font-weight:600;color:var(--navy)}
 .account-email{color:var(--muted);font-size:.9rem;margin-top:6px}
 
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:48px}
+.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 14px;text-align:center}
+.stat-tile b{display:block;font-family:'Fraunces',serif;font-size:1.6rem;color:var(--navy);margin-bottom:2px}
+.stat-tile span{font-size:.72rem;color:var(--muted);letter-spacing:.2px}
+
+/* SECTION TITLES */
+.section-title{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;color:var(--navy);margin:0 0 8px}
+.section-sub{font-size:.85rem;color:var(--muted);margin-bottom:22px}
+section.account-block{margin-bottom:52px}
+
+/* BADGES */
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:14px}
+.badge-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 10px;text-align:center;transition:all .3s}
+.badge-card.locked{opacity:.4}
+.badge-card.earned{border-color:var(--forest);box-shadow:0 10px 22px rgba(184,134,62,.14)}
+.badge-icon{font-size:1.9rem;margin-bottom:8px;display:block}
+.badge-name{font-size:.76rem;font-weight:700;color:var(--navy);margin-bottom:3px;line-height:1.3}
+.badge-desc{font-size:.66rem;color:var(--muted);line-height:1.4}
+
+/* ORDERS (reused) */
 .orders-list{display:flex;flex-direction:column;gap:18px}
 .order-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 28px}
 .order-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
@@ -61,12 +82,44 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;background:r
 .order-total{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border)}
 .order-total b{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--navy)}
 
-.empty-orders{text-align:center;padding:80px 20px;color:var(--muted)}
-.empty-orders span{font-size:2.6rem;display:block;margin-bottom:16px}
-.empty-orders a{color:var(--forest);font-weight:700;text-decoration:none;border-bottom:1px solid var(--forest)}
+/* PURCHASES / REVIEWS */
+.purchases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.purchase-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;gap:12px}
+.purchase-card img{width:50px;height:68px;object-fit:cover;border-radius:6px;flex-shrink:0}
+.purchase-info{flex:1;min-width:0;display:flex;flex-direction:column}
+.purchase-title{font-family:'Fraunces',serif;font-size:.85rem;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:2px}
+.purchase-author{font-size:.7rem;color:var(--muted);margin-bottom:8px}
+.purchase-stars{color:var(--forest);font-size:.82rem;letter-spacing:1px;margin-bottom:4px}
+.purchase-comment{font-size:.74rem;color:var(--muted);font-style:italic;line-height:1.5;margin-bottom:6px}
+.review-btn{background:none;border:1px solid var(--border);color:var(--navy);font-size:.72rem;font-weight:700;padding:6px 12px;border-radius:100px;cursor:pointer;transition:all .2s;align-self:flex-start;margin-top:auto;font-family:'Inter',sans-serif}
+.review-btn:hover{border-color:var(--forest);color:var(--forest)}
 
-.loading{text-align:center;padding:80px 20px;color:var(--muted)}
+.empty-block{text-align:center;padding:60px 20px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:16px}
+.empty-block span{font-size:2.2rem;display:block;margin-bottom:14px}
+.empty-block a{color:var(--forest);font-weight:700;text-decoration:none;border-bottom:1px solid var(--forest)}
 
+.loading{text-align:center;padding:60px 20px;color:var(--muted)}
+
+/* REVIEW MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(28,22,16,.5);z-index:9997;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.modal-overlay.open{opacity:1;visibility:visible}
+.review-modal{background:var(--card);border-radius:18px;padding:32px;max-width:420px;width:100%}
+.review-modal h3{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--navy);margin-bottom:4px}
+.modal-book{font-size:.82rem;color:var(--muted);margin-bottom:22px}
+.star-picker{display:flex;gap:6px;margin-bottom:20px;font-size:1.9rem}
+.star-picker span{cursor:pointer;color:var(--border);transition:color .15s}
+.star-picker span.active{color:var(--forest)}
+.review-modal textarea{width:100%;background:var(--paper2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-family:'Inter',sans-serif;font-size:.88rem;min-height:90px;resize:vertical;outline:none;margin-bottom:8px}
+.review-modal textarea:focus{border-color:var(--forest)}
+.review-error{font-size:.78rem;color:#a8402a;margin-bottom:10px;display:none}
+.modal-actions{display:flex;gap:10px;margin-top:14px}
+.modal-close-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:100px;padding:11px 20px;font-family:'Inter',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer}
+.modal-submit-btn{flex:1;background:var(--grad);color:#fff;border:none;border-radius:100px;padding:11px 20px;font-family:'Inter',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer}
+.modal-submit-btn:disabled{opacity:.6;cursor:not-allowed}
+
+@media(max-width:700px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
 @media(max-width:600px){
   #account{padding:110px 0 60px}
   .order-card{padding:20px}
@@ -95,11 +148,48 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;background:r
       <p class="account-email" id="userEmail"></p>
     </div>
 
-    <div id="ordersContainer">
-      <div class="loading">Cargando tus pedidos...</div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-tile"><b>—</b><span>Pedidos</span></div>
+      <div class="stat-tile"><b>—</b><span>Libros comprados</span></div>
+      <div class="stat-tile"><b>—</b><span>Total gastado</span></div>
+      <div class="stat-tile"><b>—</b><span>Reseñas</span></div>
     </div>
+
+    <section class="account-block">
+      <h2 class="section-title">Tus insignias</h2>
+      <p class="section-sub">Se desbloquean a medida que comprás y reseñás libros.</p>
+      <div class="badges-grid" id="badgesGrid"></div>
+    </section>
+
+    <section class="account-block">
+      <h2 class="section-title">Tus compras</h2>
+      <p class="section-sub">Dejá tu reseña de los libros que ya compraste.</p>
+      <div id="purchasesContainer"><div class="loading">Cargando...</div></div>
+    </section>
+
+    <section class="account-block">
+      <h2 class="section-title">Tus pedidos</h2>
+      <div id="ordersContainer"><div class="loading">Cargando...</div></div>
+    </section>
   </div>
 </section>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="reviewOverlay">
+  <div class="review-modal">
+    <h3>Dejá tu reseña</h3>
+    <div class="modal-book" id="reviewBookTitle"></div>
+    <div class="star-picker" id="starPicker">
+      <span data-star="1">★</span><span data-star="2">★</span><span data-star="3">★</span><span data-star="4">★</span><span data-star="5">★</span>
+    </div>
+    <textarea id="reviewComment" placeholder="¿Qué te pareció el libro? (opcional)"></textarea>
+    <div class="review-error" id="reviewError"></div>
+    <div class="modal-actions">
+      <button type="button" class="modal-close-btn" id="reviewCancel">Cancelar</button>
+      <button type="button" class="modal-submit-btn" id="reviewSubmit">Guardar reseña</button>
+    </div>
+  </div>
+</div>
 
 <script src="auth.js"></script>
 <script>
@@ -126,54 +216,215 @@ const DELIVERY_LABELS = {
   'retiro-maracay': 'Retiro en Maracay (Cafebrería)'
 };
 
-async function loadOrders() {
+const BADGES = [
+  { id: 'primera-compra', icon: '🎉', name: 'Primera compra', desc: '1 pedido realizado', check: s => s.orders >= 1 },
+  { id: 'cliente-frecuente', icon: '🛍️', name: 'Cliente frecuente', desc: '3 pedidos realizados', check: s => s.orders >= 3 },
+  { id: 'cliente-vip', icon: '👑', name: 'Cliente VIP', desc: '5 pedidos realizados', check: s => s.orders >= 5 },
+  { id: 'lector-voraz', icon: '📚', name: 'Lector voraz', desc: '10 libros comprados', check: s => s.books >= 10 },
+  { id: 'gran-mecenas', icon: '💎', name: 'Gran mecenas', desc: '$150 gastados', check: s => s.spent >= 150 },
+  { id: 'primera-resena', icon: '✍️', name: 'Primera reseña', desc: '1 reseña escrita', check: s => s.reviews >= 1 },
+  { id: 'critico-experto', icon: '🌟', name: 'Crítico experto', desc: '5 reseñas escritas', check: s => s.reviews >= 5 }
+];
+
+let ORDERS = [];
+let REVIEWS_MAP = {}; // slug -> review
+
+function renderStats(stats) {
+  const tiles = document.querySelectorAll('.stat-tile b');
+  tiles[0].textContent = stats.orders;
+  tiles[1].textContent = stats.books;
+  tiles[2].textContent = `$${stats.spent.toFixed(0)}`;
+  tiles[3].textContent = stats.reviews;
+}
+
+function renderBadges(stats) {
+  const grid = document.getElementById('badgesGrid');
+  grid.innerHTML = BADGES.map(b => {
+    const earned = b.check(stats);
+    return `
+      <div class="badge-card ${earned ? 'earned' : 'locked'}" title="${b.desc}">
+        <span class="badge-icon">${b.icon}</span>
+        <div class="badge-name">${b.name}</div>
+        <div class="badge-desc">${earned ? '¡Conseguida!' : b.desc}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderOrders() {
   const container = document.getElementById('ordersContainer');
+  if (!ORDERS.length) {
+    container.innerHTML = `
+      <div class="empty-block">
+        <span>📭</span>
+        Todavía no tenés pedidos.<br>
+        <a href="catalogo.html">Explorá el catálogo →</a>
+      </div>`;
+    return;
+  }
+  container.innerHTML = `<div class="orders-list">${ORDERS.map(o => `
+    <div class="order-card">
+      <div class="order-top">
+        <div>
+          <div class="order-id">Pedido #${o.id}</div>
+          <div class="order-date">${formatDate(o.created_at)}</div>
+        </div>
+        <span class="order-status">${o.status}</span>
+      </div>
+      <div class="order-items">
+        ${o.items.map(i => `
+          <div class="order-item">
+            <span>${i.title}${i.qty > 1 ? ` × ${i.qty}` : ''}</span>
+            <span>$${(i.price * i.qty).toFixed(2)}</span>
+          </div>`).join('')}
+      </div>
+      ${o.shipping ? `
+      <div class="order-shipping">
+        <span>📦 ${DELIVERY_LABELS[o.shipping.delivery] || o.shipping.delivery || ''}</span>
+        ${o.shipping.address ? `<span>📍 ${o.shipping.address}</span>` : ''}
+        ${o.shipping.agency ? `<span>🏢 ${o.shipping.agency}</span>` : ''}
+        ${o.shipping.location ? `<span>📍 ${o.shipping.location}</span>` : ''}
+        ${o.shipping.payMethod ? `<span>💳 ${o.shipping.payMethod}</span>` : ''}
+      </div>` : ''}
+      <div class="order-total">
+        <span>Total</span>
+        <b>$${Number(o.total).toFixed(2)}</b>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function renderPurchases() {
+  const container = document.getElementById('purchasesContainer');
+  const uniqueBooks = [];
+  const seen = new Set();
+  ORDERS.forEach(o => o.items.forEach(i => {
+    if (i.slug && !seen.has(i.slug)) { seen.add(i.slug); uniqueBooks.push(i); }
+  }));
+
+  if (!uniqueBooks.length) {
+    container.innerHTML = `
+      <div class="empty-block">
+        <span>📖</span>
+        Todavía no compraste ningún libro.<br>
+        <a href="catalogo.html">Explorá el catálogo →</a>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="purchases-grid">${uniqueBooks.map(b => {
+    const review = REVIEWS_MAP[b.slug];
+    return `
+      <div class="purchase-card">
+        <img src="${b.img}" alt="${b.title}">
+        <div class="purchase-info">
+          <div class="purchase-title">${b.title}</div>
+          <div class="purchase-author">${b.author || ''}</div>
+          ${review ? `
+            <div class="purchase-stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+            ${review.comment ? `<div class="purchase-comment">"${review.comment}"</div>` : ''}
+            <button type="button" class="review-btn" data-slug="${b.slug}" data-title="${b.title}">Editar reseña</button>
+          ` : `
+            <button type="button" class="review-btn" data-slug="${b.slug}" data-title="${b.title}">Dejar reseña ✍️</button>
+          `}
+        </div>
+      </div>`;
+  }).join('')}</div>`;
+
+  container.querySelectorAll('.review-btn').forEach(btn => {
+    btn.addEventListener('click', () => openReviewModal(btn.dataset.slug, btn.dataset.title));
+  });
+}
+
+// ── REVIEW MODAL ──
+const reviewOverlay = document.getElementById('reviewOverlay');
+const starPicker = document.getElementById('starPicker');
+let currentRating = 0;
+let currentSlug = null;
+let currentTitle = null;
+
+function setStars(n) {
+  currentRating = n;
+  starPicker.querySelectorAll('span').forEach(s => s.classList.toggle('active', Number(s.dataset.star) <= n));
+}
+starPicker.querySelectorAll('span').forEach(s => s.addEventListener('click', () => setStars(Number(s.dataset.star))));
+
+function openReviewModal(slug, title) {
+  currentSlug = slug;
+  currentTitle = title;
+  const existing = REVIEWS_MAP[slug];
+  setStars(existing ? existing.rating : 0);
+  document.getElementById('reviewBookTitle').textContent = title;
+  document.getElementById('reviewComment').value = existing ? (existing.comment || '') : '';
+  document.getElementById('reviewError').style.display = 'none';
+  reviewOverlay.classList.add('open');
+}
+function closeReviewModal() { reviewOverlay.classList.remove('open'); }
+document.getElementById('reviewCancel').addEventListener('click', closeReviewModal);
+reviewOverlay.addEventListener('click', e => { if (e.target === reviewOverlay) closeReviewModal(); });
+
+document.getElementById('reviewSubmit').addEventListener('click', async () => {
+  const errEl = document.getElementById('reviewError');
+  errEl.style.display = 'none';
+  if (!currentRating) {
+    errEl.textContent = 'Elegí una calificación de 1 a 5 estrellas.';
+    errEl.style.display = 'block';
+    return;
+  }
+  const btn = document.getElementById('reviewSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
   try {
-    const data = await authFetch('/orders');
-    if (!data.orders.length) {
-      container.innerHTML = `
-        <div class="empty-orders">
-          <span>📭</span>
-          Todavía no tenés pedidos.<br>
-          <a href="catalogo.html">Explorá el catálogo →</a>
-        </div>`;
-      return;
-    }
-    container.innerHTML = `<div class="orders-list">${data.orders.map(o => `
-      <div class="order-card">
-        <div class="order-top">
-          <div>
-            <div class="order-id">Pedido #${o.id}</div>
-            <div class="order-date">${formatDate(o.created_at)}</div>
-          </div>
-          <span class="order-status">${o.status}</span>
-        </div>
-        <div class="order-items">
-          ${o.items.map(i => `
-            <div class="order-item">
-              <span>${i.title}${i.qty > 1 ? ` × ${i.qty}` : ''}</span>
-              <span>$${(i.price * i.qty).toFixed(2)}</span>
-            </div>`).join('')}
-        </div>
-        ${o.shipping ? `
-        <div class="order-shipping">
-          <span>📦 ${DELIVERY_LABELS[o.shipping.delivery] || o.shipping.delivery || ''}</span>
-          ${o.shipping.address ? `<span>📍 ${o.shipping.address}</span>` : ''}
-          ${o.shipping.agency ? `<span>🏢 ${o.shipping.agency}</span>` : ''}
-          ${o.shipping.location ? `<span>📍 ${o.shipping.location}</span>` : ''}
-          ${o.shipping.payMethod ? `<span>💳 ${o.shipping.payMethod}</span>` : ''}
-        </div>` : ''}
-        <div class="order-total">
-          <span>Total</span>
-          <b>$${Number(o.total).toFixed(2)}</b>
-        </div>
-      </div>`).join('')}</div>`;
+    const data = await authFetch('/reviews', {
+      method: 'POST',
+      body: JSON.stringify({
+        book_slug: currentSlug,
+        book_title: currentTitle,
+        rating: currentRating,
+        comment: document.getElementById('reviewComment').value.trim()
+      })
+    });
+    REVIEWS_MAP[currentSlug] = data.review;
+    closeReviewModal();
+    renderPurchases();
+    const stats = computeStats();
+    renderStats(stats);
+    renderBadges(stats);
   } catch (err) {
-    container.innerHTML = `<div class="empty-orders"><span>⚠️</span>${err.message}</div>`;
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Guardar reseña';
+});
+
+function computeStats() {
+  const orders = ORDERS.length;
+  const spent = ORDERS.reduce((s, o) => s + Number(o.total), 0);
+  const books = ORDERS.reduce((s, o) => s + o.items.reduce((s2, i) => s2 + i.qty, 0), 0);
+  const reviews = Object.keys(REVIEWS_MAP).length;
+  return { orders, spent, books, reviews };
+}
+
+async function loadAccount() {
+  try {
+    const [ordersData, reviewsData] = await Promise.all([
+      authFetch('/orders'),
+      authFetch('/reviews/mine')
+    ]);
+    ORDERS = ordersData.orders;
+    REVIEWS_MAP = Object.fromEntries(reviewsData.reviews.map(r => [r.book_slug, r]));
+
+    const stats = computeStats();
+    renderStats(stats);
+    renderBadges(stats);
+    renderPurchases();
+    renderOrders();
+  } catch (err) {
+    document.getElementById('ordersContainer').innerHTML = `<div class="empty-block"><span>⚠️</span>${err.message}</div>`;
+    document.getElementById('purchasesContainer').innerHTML = '';
   }
 }
 
-if (isLoggedIn()) loadOrders();
+if (isLoggedIn()) loadAccount();
 </script>
 </body>
 </html>

@@ -122,4 +122,61 @@ app.post('/api/orders', authenticate, async (req, res) => {
   }
 });
 
+// ── REVIEWS ──
+app.get('/api/reviews/mine', authenticate, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, book_slug, book_title, rating, comment, created_at FROM reviews WHERE user_id = $1 ORDER BY created_at DESC',
+      [req.userId]
+    );
+    res.json({ reviews: result.rows });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al obtener tus reseñas.' });
+  }
+});
+
+app.get('/api/reviews/book/:slug', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT r.rating, r.comment, r.created_at, u.name AS user_name
+       FROM reviews r JOIN users u ON u.id = r.user_id
+       WHERE r.book_slug = $1 ORDER BY r.created_at DESC`,
+      [req.params.slug]
+    );
+    res.json({ reviews: result.rows });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al obtener las reseñas.' });
+  }
+});
+
+app.post('/api/reviews', authenticate, async (req, res) => {
+  const { book_slug, book_title, rating, comment } = req.body || {};
+  if (!book_slug || !book_title || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+    return res.status(400).json({ error: 'Reseña inválida: falta el libro o la calificación (1 a 5).' });
+  }
+  try {
+    // Only allow reviewing books the client actually bought.
+    const owns = await pool.query(
+      `SELECT 1 FROM orders WHERE user_id = $1 AND items @> $2::jsonb LIMIT 1`,
+      [req.userId, JSON.stringify([{ slug: book_slug }])]
+    );
+    if (!owns.rows.length) {
+      return res.status(403).json({ error: 'Solo podés reseñar libros que hayas comprado.' });
+    }
+    const result = await pool.query(
+      `INSERT INTO reviews (user_id, book_slug, book_title, rating, comment)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (user_id, book_slug) DO UPDATE SET rating = $4, comment = $5, created_at = now()
+       RETURNING id, book_slug, book_title, rating, comment, created_at`,
+      [req.userId, book_slug, book_title, rating, comment || null]
+    );
+    res.json({ review: result.rows[0] });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al guardar la reseña.' });
+  }
+});
+
 app.listen(PORT, () => console.log(`Booksflea API escuchando en http://localhost:${PORT}`));

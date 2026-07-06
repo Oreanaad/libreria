@@ -75,6 +75,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:a
 .detail-external{font-size:.85rem;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:2px;transition:color .2s}
 .detail-external:hover{color:var(--forest)}
 
+/* ── REVIEWS ── */
+#bookReviews{padding:20px 0 40px}
+.reviews-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.reviews-title{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;color:var(--navy)}
+.reviews-avg{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.reviews-avg b{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--navy)}
+.reviews-stars{color:var(--forest);letter-spacing:1px}
+.reviews-list{display:flex;flex-direction:column;gap:14px}
+.review-row{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.review-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px;flex-wrap:wrap}
+.review-row-name{font-weight:700;color:var(--navy);font-size:.88rem}
+.review-row-date{font-size:.72rem;color:var(--muted)}
+.review-row-comment{font-size:.86rem;color:var(--ink);line-height:1.7}
+.reviews-empty{color:var(--muted);font-size:.88rem}
+
 .not-found{text-align:center;padding:60px 20px}
 .not-found span{font-size:2.6rem;display:block;margin-bottom:18px}
 .not-found h2{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--navy);margin-bottom:10px}
@@ -187,6 +202,17 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
   <div class="container">
     <a href="catalogo.html" class="back-link">← Volver al catálogo</a>
     <div id="detailContent"></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="bookReviews" style="display:none">
+  <div class="container">
+    <div class="reviews-header">
+      <span class="reviews-title">Reseñas de lectores</span>
+      <div class="reviews-avg" id="reviewsAvg"></div>
+    </div>
+    <div class="reviews-list" id="reviewsList"></div>
   </div>
 </section>
 
@@ -312,6 +338,36 @@ if (!book) {
           <div class="rcard-price">$${b.price}</div>
         </div>
       </a>`).join('');
+  }
+
+  loadBookReviews(book.slug);
+}
+
+async function loadBookReviews(slug) {
+  try {
+    const data = await authFetch(`/reviews/book/${slug}`);
+    const section = document.getElementById('bookReviews');
+    const listEl = document.getElementById('reviewsList');
+    const avgEl = document.getElementById('reviewsAvg');
+    section.style.display = '';
+    if (!data.reviews.length) {
+      avgEl.innerHTML = '';
+      listEl.innerHTML = `<p class="reviews-empty">Todavía no hay reseñas de este libro — ¡comprálo y sé el primero en opinar!</p>`;
+      return;
+    }
+    const avg = data.reviews.reduce((s, r) => s + r.rating, 0) / data.reviews.length;
+    avgEl.innerHTML = `<span class="reviews-stars">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5 - Math.round(avg))}</span> <b>${avg.toFixed(1)}</b> (${data.reviews.length} reseña${data.reviews.length > 1 ? 's' : ''})`;
+    listEl.innerHTML = data.reviews.map(r => `
+      <div class="review-row">
+        <div class="review-row-top">
+          <span class="review-row-name">${r.user_name}</span>
+          <span class="review-row-date">${new Date(r.created_at).toLocaleDateString('es-VE', { day:'numeric', month:'long', year:'numeric' })}</span>
+        </div>
+        <div class="reviews-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+        ${r.comment ? `<p class="review-row-comment">${r.comment}</p>` : ''}
+      </div>`).join('');
+  } catch (err) {
+    console.error('No se pudieron cargar las reseñas:', err.message);
   }
 }
 </script>

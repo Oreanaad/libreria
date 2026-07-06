@@ -18,7 +18,7 @@ function addToCart(book){
   const cart = getCart();
   const existing = cart.find(i => i.title === book.title);
   if (existing) existing.qty += 1;
-  else cart.push({ title: book.title, author: book.author, price: book.price, img: book.img, url: book.url, qty: 1 });
+  else cart.push({ slug: book.slug, title: book.title, author: book.author, price: book.price, img: book.img, url: book.url, qty: 1 });
   saveCart(cart);
   openCart();
 }
