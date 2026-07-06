@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo — Booksflea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,500;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --paper:#FEFDFB;
+  --paper2:#F3E9D7;
+  --card:#FFFFFF;
+  --navy:#2B2216;
+  --navy-deep:#1C1610;
+  --forest:#B8863E;
+  --sage:#D8B879;
+  --olive:#C9A15B;
+  --tan:#E8CE9E;
+  --leather:#8F6A2E;
+  --ink:#2E2820;
+  --muted:#746754;
+  --border:rgba(184,134,62,.24);
+  --grad:linear-gradient(135deg,#8A6A35,#B8894B);
+}
+
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--sage) var(--paper2)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--paper2)}
+::-webkit-scrollbar-thumb{background:var(--sage);border-radius:3px}
+
+body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;line-height:1.65}
+.container{max-width:1240px;margin:0 auto;padding:0 24px}
+.serif{font-family:'Fraunces',serif}
+.accent{color:var(--forest);font-style:italic}
+
+/* ── NAV (shared) ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;transition:all .35s ease;background:rgba(254,253,251,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:1.5rem;letter-spacing:.5px;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo em{font-style:italic;color:var(--forest)}
+.nav-links{display:flex;gap:30px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:600;letter-spacing:.2px;transition:color .3s;position:relative}
+.nav-links a.active{color:var(--forest)}
+.nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:2px;background:var(--forest);transition:width .3s ease}
+.nav-links a:hover{color:var(--navy)}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-cta{background:var(--grad);color:#fff;padding:10px 22px;border-radius:100px;font-weight:700;font-size:.85rem;text-decoration:none;letter-spacing:.3px;transition:opacity .3s,transform .2s;white-space:nowrap}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;border:none;background:none;padding:4px}
+.hamburger span{width:24px;height:2px;background:var(--navy);border-radius:2px;transition:all .3s;display:block}
+.hamburger.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── HERO ── */
+#cat-hero{position:relative;padding:150px 0 60px;overflow:hidden}
+.hero-blob{position:absolute;border-radius:50%;filter:blur(110px);pointer-events:none;opacity:.45}
+.cb-1{width:460px;height:460px;background:var(--tan);top:-160px;right:-100px}
+.cb-2{width:380px;height:380px;background:var(--sage);top:20px;left:-140px;opacity:.3}
+.cat-hero-inner{position:relative;z-index:2;text-align:center;max-width:720px;margin:0 auto}
+.cat-eyebrow{display:inline-flex;align-items:center;gap:9px;background:rgba(184,134,62,.10);border:1px solid rgba(184,134,62,.32);border-radius:100px;padding:7px 18px;font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest);margin-bottom:22px}
+.cat-title{font-family:'Fraunces',serif;font-size:clamp(2.2rem,4.6vw,3.4rem);font-weight:600;line-height:1.1;color:var(--navy);margin-bottom:16px}
+.cat-desc{font-size:1.02rem;color:var(--muted);max-width:520px;margin:0 auto 8px}
+.cat-count{font-size:.85rem;color:var(--leather);font-weight:700;margin-top:6px}
+
+/* ── TOOLBAR ── */
+#toolbar{position:sticky;top:0;z-index:900;background:rgba(254,253,251,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:16px 0;margin-top:20px}
+.toolbar-inner{display:flex;flex-direction:column;gap:14px}
+.toolbar-row1{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:220px}
+.search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+#searchInput{width:100%;background:var(--paper2);border:1px solid var(--border);border-radius:100px;padding:11px 18px 11px 40px;font-family:'Inter',sans-serif;font-size:.9rem;color:var(--ink);outline:none;transition:border-color .3s}
+#searchInput:focus{border-color:var(--forest)}
+#sortSelect{background:var(--paper2);border:1px solid var(--border);border-radius:100px;padding:11px 34px 11px 18px;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;color:var(--navy);outline:none;cursor:pointer;transition:border-color .3s;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23746754' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+#sortSelect:focus{border-color:var(--forest)}
+.pills-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.pills-scroll::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:100px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .25s;white-space:nowrap;font-family:'Inter',sans-serif}
+.pill:hover{border-color:var(--forest);color:var(--navy)}
+.pill.active{background:var(--grad);border-color:transparent;color:#fff}
+
+/* ── GRID ── */
+#catGrid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:22px;margin:44px 0}
+.gcard{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease,opacity .3s ease;display:flex;flex-direction:column;opacity:1}
+.gcard:hover{transform:translateY(-6px);box-shadow:0 26px 50px rgba(43,34,22,.16)}
+.gcard.hide{display:none}
+.gcard.spotlight{grid-column:span 2;grid-row:span 2;flex-direction:row}
+.gcard.spotlight .gcover{aspect-ratio:auto;flex:0 0 52%;align-self:stretch}
+.gcard.spotlight .ginfo{flex:1;padding:32px;display:flex;flex-direction:column;justify-content:center}
+.gcard.spotlight .gtitle{font-size:1.5rem;-webkit-line-clamp:3;margin-bottom:6px}
+.gcard.spotlight .gauthor{font-size:.85rem}
+.gcard.spotlight .goverlay{display:none}
+.spot-badge{display:inline-block;width:fit-content;font-size:.72rem;font-weight:700;letter-spacing:.5px;color:var(--leather);margin:16px 0 4px;order:-1}
+.spot-meta{display:flex;align-items:center;gap:14px;margin:16px 0 26px}
+.spot-cat{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--forest);background:rgba(184,134,62,.1);padding:5px 14px;border-radius:100px}
+.spot-price{font-family:'Fraunces',serif;font-weight:700;font-size:1.7rem;color:var(--navy)}
+.spot-actions{display:flex;gap:10px;flex-wrap:wrap}
+.spot-actions a{padding:12px 22px;border-radius:100px;font-size:.82rem;font-weight:700;text-decoration:none;transition:all .25s}
+.spot-actions .go-buy{background:var(--grad);color:#fff;flex:none}
+.spot-actions .go-buy:hover{opacity:.88;transform:translateY(-2px)}
+.go-detail-alt{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}
+.go-detail-alt:hover{background:var(--navy);color:#fff}
+
+.gcover{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--paper2)}
+.gcover img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.gcard:hover .gcover img{transform:scale(1.06)}
+.gtag{position:absolute;top:10px;left:10px;background:rgba(254,253,251,.92);color:var(--forest);font-size:.63rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 10px;border-radius:100px;z-index:2}
+.gprice{position:absolute;top:10px;right:10px;background:var(--navy);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:.82rem;padding:4px 11px;border-radius:100px;z-index:2}
+.goverlay{position:absolute;inset:auto 0 0 0;display:flex;gap:8px;padding:12px;background:linear-gradient(0deg,rgba(28,22,16,.88),transparent);transform:translateY(100%);transition:transform .3s ease;z-index:2}
+.gcard:hover .goverlay{transform:translateY(0)}
+.goverlay a{flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:.72rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:opacity .2s}
+.go-buy{background:var(--forest);color:#fff}
+.go-buy:hover{opacity:.88}
+.go-detail{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.ginfo{padding:14px 15px 16px}
+.gtitle{font-family:'Fraunces',serif;font-size:.9rem;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gauthor{font-size:.72rem;color:var(--muted)}
+
+.empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--muted)}
+.empty-state span{font-size:2.4rem;display:block;margin-bottom:14px}
+
+.cat-cta{background:var(--paper2);border-radius:20px;padding:44px;text-align:center;margin:70px 0 90px}
+.cat-cta h3{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--navy);margin-bottom:10px}
+.cat-cta p{color:var(--muted);margin-bottom:26px;max-width:480px;margin-left:auto;margin-right:auto}
+.cat-cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--grad);color:#fff;padding:14px 28px;border-radius:100px;font-weight:700;font-size:.9rem;text-decoration:none;letter-spacing:.3px;transition:all .3s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(43,34,22,.28)}
+.btn-outline{background:transparent;color:var(--navy);padding:14px 28px;border-radius:100px;font-weight:700;font-size:.9rem;text-decoration:none;letter-spacing:.3px;border:1.5px solid var(--navy);transition:all .3s}
+.btn-outline:hover{background:var(--navy);color:#fff;transform:translateY(-3px)}
+
+/* ── FOOTER / WHATSAPP (shared) ── */
+footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
+.foot-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.foot-logo{font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;letter-spacing:.3px;color:#fff}
+.foot-copy{font-size:.8rem}
+.foot-links{display:flex;gap:22px;list-style:none}
+.foot-links a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.8rem;transition:color .3s}
+.foot-links a:hover{color:#fff}
+.wa-btn{position:fixed;bottom:24px;right:24px;z-index:9990;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 22px rgba(37,211,102,.4);transition:transform .3s,box-shadow .3s;text-decoration:none}
+.wa-btn:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(37,211,102,.55)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1000px){
+  #catGrid{grid-template-columns:repeat(3,1fr)}
+  .gcard.spotlight{grid-column:span 3;grid-row:span 1;flex-direction:row}
+  .gcard.spotlight .gcover{flex-basis:38%}
+}
+@media(max-width:820px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  nav .nav-cta{display:none}
+  #catGrid{grid-template-columns:repeat(2,1fr)}
+  .gcard.spotlight{grid-column:span 2;flex-direction:column}
+  .gcard.spotlight .gcover{flex-basis:auto;aspect-ratio:3/4;align-self:auto}
+}
+@media(max-width:560px){
+  #catGrid{grid-template-columns:1fr 1fr;gap:14px}
+  .cat-hero-inner{padding:0 6px}
+  .cat-cta{padding:30px 22px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">📖 Books<em>flea</em></a>
+      <ul class="nav-links">
+        <li><a href="index.html#sobre">Nosotros</a></li>
+        <li><a href="index.html#colecciones">Colecciones</a></li>
+        <li><a href="catalogo.html" class="active">Catálogo</a></li>
+        <li><a href="index.html#proceso">Cómo comprar</a></li>
+        <li><a href="index.html#visitanos">Visítanos</a></li>
+        <li><a href="index.html#contacto">Contacto</a></li>
+      </ul>
+      <a href="index.html#contacto" class="nav-cta">Contactar</a>
+      <button class="hamburger" id="hamburger" aria-label="Menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="cat-hero">
+  <div class="hero-blob cb-1"></div>
+  <div class="hero-blob cb-2"></div>
+  <div class="container cat-hero-inner">
+    <div class="cat-eyebrow">Catálogo Booksflea</div>
+    <h1 class="cat-title">Explora nuestra <em class="accent">selección</em></h1>
+    <p class="cat-desc">Una muestra curada de nuestro catálogo activo — filtra por colección, busca por título o autor, y compra directo por WhatsApp.</p>
+    <p class="cat-count" id="resultCount">20 títulos seleccionados de +50.000 en catálogo</p>
+  </div>
+</section>
+
+<!-- TOOLBAR -->
+<div id="toolbar">
+  <div class="container toolbar-inner">
+    <div class="toolbar-row1">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Buscar por título o autor...">
+      </div>
+      <select id="sortSelect">
+        <option value="relevancia">Relevancia</option>
+        <option value="precio-asc">Precio: menor a mayor</option>
+        <option value="precio-desc">Precio: mayor a menor</option>
+        <option value="titulo">Título A-Z</option>
+      </select>
+    </div>
+    <div class="pills-scroll" id="pillsRow"></div>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="container">
+  <div id="catGrid"></div>
+
+  <div class="cat-cta">
+    <h3>¿No encontraste tu próxima lectura?</h3>
+    <p>Nuestro catálogo completo supera los 50.000 títulos. Escríbenos y te ayudamos a encontrar exactamente lo que buscas.</p>
+    <div class="cat-cta-btns">
+      <a id="ctaWa" href="#" target="_blank" rel="noopener" class="btn-primary">Escríbenos por WhatsApp →</a>
+      <a href="https://booksflea.com/" target="_blank" rel="noopener" class="btn-outline">Ver sitio completo</a>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP FLOAT -->
+<a class="wa-btn" id="floatWa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container foot-inner">
+    <span class="foot-logo">📖 Booksflea</span>
+    <p class="foot-copy">Rif. J-50127757-5 · © 2026 Booksflea. Todos los derechos reservados.</p>
+    <ul class="foot-links">
+      <li><a href="https://booksflea.com/" target="_blank" rel="noopener">Tienda</a></li>
+      <li><a href="index.html#contacto">Contacto</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+const WA_NUMBER = '584145962337';
+function waLink(text){ return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`; }
+document.getElementById('ctaWa').href = waLink('Hola Booksflea 👋 No encontré lo que buscaba en el catálogo, ¿me ayudan a encontrarlo?');
+document.getElementById('floatWa').href = waLink('Hola Booksflea 👋 Quisiera más información sobre su catálogo de libros.');
+
+// ── NAV (hamburger) ──
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.querySelector('.nav-links');
+let menuOpen = false;
+function openMenu(){
+  menuOpen = true; hamburger.classList.add('active');
+  Object.assign(navLinks.style, {
+    display:'flex', flexDirection:'column', position:'fixed', top:'62px', left:'0', right:'0',
+    background:'rgba(254,253,251,.98)', backdropFilter:'blur(16px)', padding:'26px 24px',
+    borderBottom:'1px solid rgba(184,134,62,.24)', gap:'20px', zIndex:'999'
+  });
+}
+function closeMenu(){ menuOpen = false; hamburger.classList.remove('active'); navLinks.removeAttribute('style'); }
+hamburger.addEventListener('click', () => menuOpen ? closeMenu() : openMenu());
+
+// ── CATEGORY METADATA ──
+const CATS = [
+  { slug:'novela', label:'Novela y Narrativa', icon:'📚' },
+  { slug:'fantasia', label:'Fantasía', icon:'🐉' },
+  { slug:'dibujo', label:'Dibujo y Coloring', icon:'🎨' },
+  { slug:'arte', label:'Arte', icon:'🖌️' },
+  { slug:'infantil', label:'Infantil', icon:'🧸' },
+  { slug:'autoayuda-y-espiritualidad', label:'Autoayuda', icon:'🌿' },
+  { slug:'anatomia', label:'Anatomía', icon:'🧠' },
+  { slug:'ficcion-historica', label:'Ficción Histórica', icon:'🏛️' },
+  { slug:'entretenimiento', label:'Entretenimiento', icon:'🧩' }
+];
+
+// ── REAL CATALOG DATA (from booksflea.com) ──
+const BOOKS = [
+  { title:'Caída Libre', author:'Ali Hazelwood', price:30, cat:'novela', img:'assets/book-caida-libre.jpg', url:'https://booksflea.com/novela/caida-libre/', spotlight:true },
+  { title:'A Court of Thorns and Roses — Coloring Book', author:'Sarah J. Maas', price:25, cat:'fantasia', img:'assets/book-acotar-coloring.jpg', url:'https://booksflea.com/fantasia/a-court-of-thorns-and-roses-the-official-coloring-book/' },
+  { title:'Windy City 2: Jugando Fuerte', author:'Liz Tomforde', price:39, cat:'novela', img:'assets/book-windycity2.webp', url:'https://booksflea.com/novela/windy-city-2-jugando-fuerte-the-right-move/' },
+  { title:'Windy City 1: Rozando el Cielo', author:'Liz Tomforde', price:39, cat:'novela', img:'assets/book-windycity1.jpg', url:'https://booksflea.com/novela/rozando-el-cielo/' },
+  { title:'Capybara Zen', author:'Helen H. Wu', price:20, cat:'dibujo', img:'assets/book-capybara-zen.jpg', url:'https://booksflea.com/dibujo/capybara-zen-a-story-and-coloring-book/' },
+  { title:'Un Año Iluminado', author:'Patricia López Caballero', price:22, cat:'autoayuda-y-espiritualidad', img:'assets/book-ano-iluminado.jpg', url:'https://booksflea.com/autoayuda-y-espiritualidad/un-ano-iluminado/' },
+  { title:'Dictator I: La Sombra de Julio César', author:'Andrea Frediani', price:25, cat:'ficcion-historica', img:'assets/book-dictator1.jpg', url:'https://booksflea.com/ficcion-historica/la-sombra-de-julio-cesar/' },
+  { title:'Dictator II: El Enemigo de Julio César', author:'Andrea Frediani', price:25, cat:'novela', img:'assets/book-dictator2.webp', url:'https://booksflea.com/novela/el-enemigo-de-julio-cesar/' },
+  { title:'Dictator III: El Triunfo de Julio César', author:'Andrea Frediani', price:25, cat:'novela', img:'assets/book-dictator3.jpg', url:'https://booksflea.com/novela/el-triunfo-de-julio-cesar/' },
+  { title:'A Un Paso de Ti', author:'Hannah Bonam-Young', price:36, cat:'novela', img:'assets/book-un-paso-de-ti.webp', url:'https://booksflea.com/novela/a-un-paso-de-ti/' },
+  { title:'House of the Dragon — Coloring Book', author:'George R.R. Martin', price:25, cat:'fantasia', img:'assets/book-hotd-coloring.jpg', url:'https://booksflea.com/fantasia/house-of-the-dragon-the-official-coloring-book/' },
+  { title:'A Game of Thrones — Coloring Book', author:'George R.R. Martin', price:25, cat:'fantasia', img:'assets/book-got-coloring.jpg', url:'https://booksflea.com/fantasia/a-game-of-thrones-the-official-coloring-book/' },
+  { title:'The Unofficial Bridgerton — Coloring Books', author:'Sara Richard', price:22, cat:'dibujo', img:'assets/book-bridgerton-coloring.jpg', url:'https://booksflea.com/dibujo/the-unofficial-bridgerton-coloring-books/' },
+  { title:'Netter. Cuaderno de Neurociencia para Colorear', author:'Mary Summo Maida', price:42, cat:'dibujo', img:'assets/book-netter-neuro.jpg', url:'https://booksflea.com/dibujo/netter-cuaderno-de-neurociencia-para-colorear/' },
+  { title:'Netter. Cuaderno de Anatomía para Colorear', author:'John T. Hansen', price:42, cat:'anatomia', img:'assets/book-netter-anatomia.jpg', url:'https://booksflea.com/anatomia/netter-cuaderno-de-anatomia-para-colorear/' },
+  { title:'Harry Potter Glow in the Dark — Coloring Book', author:'Wizarding World', price:22, cat:'arte', img:'assets/book-hp-glow.jpg', url:'https://booksflea.com/arte/harry-potter-glow-in-the-dark/' },
+  { title:'Perreo', author:'Cazzu', price:36, cat:'arte', img:'assets/book-perreo.webp', url:'https://booksflea.com/arte/perreo/' },
+  { title:'Capivibes — Coloring Book', author:'Gabriel Dearo', price:20, cat:'infantil', img:'assets/book-capivibes.webp', url:'https://booksflea.com/infantil/capivibes/' },
+  { title:'Murdoku: 80 Acertijos de Lógica y Asesinatos', author:'Manuel Garand', price:20, cat:'entretenimiento', img:'assets/book-murdoku.jpg', url:'https://booksflea.com/entretenimiento/murdoku-80-acertijos-de-logica-y-asesinatos/' },
+  { title:'Un Amigo Gratis', author:'Inma Rubiales', price:25, cat:'novela', img:'assets/book-amigo-gratis.jpg', url:'https://booksflea.com/novela/un-amigo-gratis/' }
+];
+
+const catMap = Object.fromEntries(CATS.map(c => [c.slug, c]));
+let activeCat = 'todos';
+let sortMode = 'relevancia';
+let searchTerm = '';
+
+// ── BUILD PILLS ──
+const pillsRow = document.getElementById('pillsRow');
+function countFor(slug){ return slug === 'todos' ? BOOKS.length : BOOKS.filter(b => b.cat === slug).length; }
+const allPill = { slug:'todos', label:'Todos', icon:'✦' };
+[allPill, ...CATS].forEach(c => {
+  const btn = document.createElement('button');
+  btn.className = 'pill' + (c.slug === activeCat ? ' active' : '');
+  btn.dataset.slug = c.slug;
+  btn.innerHTML = `${c.icon} ${c.label} <span style="opacity:.6">(${countFor(c.slug)})</span>`;
+  btn.addEventListener('click', () => {
+    activeCat = c.slug;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+  pillsRow.appendChild(btn);
+});
+
+// ── RENDER GRID ──
+const grid = document.getElementById('catGrid');
+const resultCount = document.getElementById('resultCount');
+
+function buyLink(b){
+  const text = `Hola Booksflea 👋 Quiero comprar:\n*${b.title}* — $${b.price}\n${b.url}\n\n¡Gracias!`;
+  return waLink(text);
+}
+
+function makeCard(b){
+  const card = document.createElement('div');
+  card.className = 'gcard' + (b.spotlight ? ' spotlight' : '');
+  card.dataset.cat = b.cat;
+  card.dataset.title = b.title.toLowerCase();
+  card.dataset.author = b.author.toLowerCase();
+  const catLabel = catMap[b.cat] ? catMap[b.cat].label : b.cat;
+  const spotExtra = b.spotlight ? `
+      <span class="spot-badge">✦ Nuestra selección</span>
+      <div class="spot-meta">
+        <span class="spot-cat">${catLabel}</span>
+        <span class="spot-price">$${b.price}</span>
+      </div>
+      <div class="spot-actions">
+        <a href="${buyLink(b)}" target="_blank" rel="noopener" class="go-buy">Comprar por WhatsApp</a>
+        <a href="${b.url}" target="_blank" rel="noopener" class="go-detail-alt">Ver detalle</a>
+      </div>` : '';
+  card.innerHTML = `
+    <div class="gcover">
+      <img src="${b.img}" alt="${b.title} — ${b.author}" loading="lazy">
+      <span class="gtag">${catLabel}</span>
+      <span class="gprice">$${b.price}</span>
+      <div class="goverlay">
+        <a href="${buyLink(b)}" target="_blank" rel="noopener" class="go-buy">Comprar</a>
+        <a href="${b.url}" target="_blank" rel="noopener" class="go-detail">Detalle</a>
+      </div>
+    </div>
+    <div class="ginfo">
+      <div class="gtitle">${b.title}</div>
+      <div class="gauthor">${b.author}</div>
+      ${spotExtra}
+    </div>`;
+  return card;
+}
+
+BOOKS.forEach(b => grid.appendChild(makeCard(b)));
+
+function render(){
+  let list = BOOKS.filter(b => {
+    const matchCat = activeCat === 'todos' || b.cat === activeCat;
+    const matchSearch = !searchTerm || b.title.toLowerCase().includes(searchTerm) || b.author.toLowerCase().includes(searchTerm);
+    return matchCat && matchSearch;
+  });
+
+  if (sortMode === 'precio-asc') list.sort((a,b) => a.price - b.price);
+  else if (sortMode === 'precio-desc') list.sort((a,b) => b.price - a.price);
+  else if (sortMode === 'titulo') list.sort((a,b) => a.title.localeCompare(b.title));
+
+  const visibleTitles = new Set(list.map(b => b.title));
+  const cards = Array.from(grid.children).filter(c => c.classList.contains('gcard'));
+  cards.forEach(card => {
+    const title = card.dataset.title;
+    const match = list.some(b => b.title.toLowerCase() === title);
+    card.classList.toggle('hide', !match);
+  });
+
+  // reorder visible cards to match sort
+  if (sortMode !== 'relevancia') {
+    list.forEach(b => {
+      const card = cards.find(c => c.dataset.title === b.title.toLowerCase());
+      if (card) grid.appendChild(card);
+    });
+  }
+
+  const existingEmpty = grid.querySelector('.empty-state');
+  if (list.length === 0) {
+    if (!existingEmpty) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.innerHTML = `<span>📭</span>No encontramos libros con esos filtros.<br>Probá con otra búsqueda o categoría.`;
+      grid.appendChild(empty);
+    }
+  } else if (existingEmpty) {
+    existingEmpty.remove();
+  }
+
+  resultCount.textContent = list.length === BOOKS.length
+    ? `${BOOKS.length} títulos seleccionados de +50.000 en catálogo`
+    : `Mostrando ${list.length} de ${BOOKS.length} títulos seleccionados`;
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchTerm = e.target.value.trim().toLowerCase();
+  render();
+});
+document.getElementById('sortSelect').addEventListener('change', e => {
+  sortMode = e.target.value;
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
