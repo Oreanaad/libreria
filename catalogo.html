@@ -177,7 +177,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
   <div class="hero-blob cb-2"></div>
   <div class="container cat-hero-inner">
     <div class="cat-eyebrow">Catálogo Booksflea</div>
-    <h1 class="cat-title">Explora nuestra <em class="accent">selección</em></h1>
+    <h1 class="cat-title" id="catTitle">Explora nuestra <em class="accent">selección</em></h1>
     <p class="cat-desc">Una muestra curada de nuestro catálogo activo — filtra por colección, busca por título o autor, y compra directo por WhatsApp.</p>
     <p class="cat-count" id="resultCount">20 títulos seleccionados de +50.000 en catálogo</p>
     <div class="trust-badge"><span class="trust-stars">★★★★★</span> <b>4.9/5</b> — valoración de nuestros clientes</div>
@@ -293,9 +293,17 @@ const BOOKS = [
 ];
 
 const catMap = Object.fromEntries(CATS.map(c => [c.slug, c]));
-let activeCat = 'todos';
+
+// Deep-linking: catalogo.html?cat=novela or ?cat=infantil,dibujo (from homepage collection cards)
+const urlCats = new URLSearchParams(location.search).get('cat');
+let activeCats = new Set(urlCats ? urlCats.split(',').filter(Boolean) : ['todos']);
 let sortMode = 'relevancia';
 let searchTerm = '';
+
+if (!activeCats.has('todos')) {
+  const labels = [...activeCats].map(slug => catMap[slug] ? catMap[slug].label : slug);
+  document.getElementById('catTitle').innerHTML = `<em class="accent">${labels.join(' & ')}</em>`;
+}
 
 // ── BUILD PILLS ──
 const pillsRow = document.getElementById('pillsRow');
@@ -303,11 +311,11 @@ function countFor(slug){ return slug === 'todos' ? BOOKS.length : BOOKS.filter(b
 const allPill = { slug:'todos', label:'Todos', icon:'✦' };
 [allPill, ...CATS].forEach(c => {
   const btn = document.createElement('button');
-  btn.className = 'pill' + (c.slug === activeCat ? ' active' : '');
+  btn.className = 'pill' + (activeCats.has(c.slug) ? ' active' : '');
   btn.dataset.slug = c.slug;
   btn.innerHTML = `${c.icon} ${c.label} <span style="opacity:.6">(${countFor(c.slug)})</span>`;
   btn.addEventListener('click', () => {
-    activeCat = c.slug;
+    activeCats = new Set([c.slug]);
     document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     render();
@@ -354,7 +362,7 @@ BOOKS.forEach(b => grid.appendChild(makeCard(b)));
 
 function render(){
   let list = BOOKS.filter(b => {
-    const matchCat = activeCat === 'todos' || b.cat === activeCat;
+    const matchCat = activeCats.has('todos') || activeCats.has(b.cat);
     const matchSearch = !searchTerm || b.title.toLowerCase().includes(searchTerm) || b.author.toLowerCase().includes(searchTerm);
     return matchCat && matchSearch;
   });
