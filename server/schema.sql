@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT false,
+  reset_token TEXT,
+  reset_token_expires TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

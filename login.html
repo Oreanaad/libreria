@@ -99,6 +99,22 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 0;background:r
         </div>
         <button type="submit" class="auth-submit" id="loginSubmit">Iniciar sesión</button>
       </form>
+      <a href="#" class="auth-back" id="forgotLink" style="margin-top:16px">¿Olvidaste tu contraseña?</a>
+    </div>
+
+    <!-- FORGOT PASSWORD -->
+    <div class="auth-panel" id="panelForgot">
+      <h1 class="auth-title">Restablecer contraseña</h1>
+      <p class="auth-sub">Te enviamos un enlace a tu email para elegir una nueva.</p>
+      <div class="auth-msg" id="forgotMsg"></div>
+      <form id="forgotForm">
+        <div class="f-row">
+          <label>Email</label>
+          <input type="email" id="forgotEmail" placeholder="vos@email.com" required>
+        </div>
+        <button type="submit" class="auth-submit" id="forgotSubmit">Enviar instrucciones</button>
+      </form>
+      <a href="#" class="auth-back" id="backToLoginLink">← Volver a iniciar sesión</a>
     </div>
 
     <!-- SIGNUP -->
@@ -172,6 +188,50 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
     showMsg(msg, err.message, 'error');
     btn.disabled = false; btn.textContent = 'Iniciar sesión';
   }
+});
+
+const authTabs = document.querySelector('.auth-tabs');
+const panelForgot = document.getElementById('panelForgot');
+
+document.getElementById('forgotLink').addEventListener('click', e => {
+  e.preventDefault();
+  authTabs.style.display = 'none';
+  panelLogin.classList.remove('active');
+  panelForgot.classList.add('active');
+});
+document.getElementById('backToLoginLink').addEventListener('click', e => {
+  e.preventDefault();
+  authTabs.style.display = '';
+  panelForgot.classList.remove('active');
+  panelLogin.classList.add('active');
+});
+
+document.getElementById('forgotForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('forgotSubmit');
+  const msg = document.getElementById('forgotMsg');
+  msg.className = 'auth-msg';
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  try {
+    const data = await authFetch('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email: document.getElementById('forgotEmail').value })
+    });
+    showMsg(msg, data.message, 'success');
+    if (data.previewUrl) {
+      const link = document.createElement('a');
+      link.href = data.previewUrl;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = 'Ver email de prueba →';
+      link.style.cssText = 'display:block;margin-top:8px;font-weight:700;color:#2f6b47';
+      msg.appendChild(link);
+    }
+    document.getElementById('forgotForm').reset();
+  } catch (err) {
+    showMsg(msg, err.message, 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Enviar instrucciones';
 });
 
 document.getElementById('signupForm').addEventListener('submit', async e => {

@@ -3,7 +3,9 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { Pool } = require('pg');
+const { sendPasswordResetEmail } = require('./mailer');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const PORT = process.env.PORT || 3001;
@@ -95,6 +97,53 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Error del servidor al iniciar sesión.' });
+  }
+});
+
+app.post('/api/auth/forgot-password', async (req, res) => {
+  const { email } = req.body || {};
+  if (!email) return res.status(400).json({ error: 'Falta el email.' });
+  try {
+    const result = await pool.query('SELECT id, email FROM users WHERE email = $1', [email.toLowerCase().trim()]);
+    const user = result.rows[0];
+    let previewUrl = null;
+    if (user) {
+      const token = crypto.randomBytes(32).toString('hex');
+      const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      await pool.query('UPDATE users SET reset_token = $2, reset_token_expires = $3 WHERE id = $1', [user.id, token, expires]);
+      const origin = req.get('origin') || 'https://booksflea-propuesta.netlify.app';
+      const resetUrl = `${origin}/reset-password.html?token=${token}`;
+      const sent = await sendPasswordResetEmail(user.email, resetUrl);
+      previewUrl = sent.previewUrl; // testing-only: Ethereal preview link, not a real inbox
+    }
+    // Same response whether or not the email exists, so we don't leak which emails are registered.
+    res.json({ ok: true, message: 'Si el email existe, te enviamos instrucciones para restablecer tu contraseña.', previewUrl });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al procesar la solicitud.' });
+  }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+  const { token, password } = req.body || {};
+  if (!token || !password) return res.status(400).json({ error: 'Faltan datos.' });
+  if (password.length < 6) return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres.' });
+  try {
+    const result = await pool.query(
+      'SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires > now()',
+      [token]
+    );
+    const user = result.rows[0];
+    if (!user) return res.status(400).json({ error: 'El enlace es inválido o venció. Pedí uno nuevo.' });
+    const hash = await bcrypt.hash(password, 10);
+    await pool.query(
+      'UPDATE users SET password_hash = $2, reset_token = NULL, reset_token_expires = NULL WHERE id = $1',
+      [user.id, hash]
+    );
+    res.json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Error del servidor al restablecer la contraseña.' });
   }
 });
 
