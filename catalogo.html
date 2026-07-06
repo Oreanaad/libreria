@@ -145,6 +145,8 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
 .wa-btn:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(37,211,102,.55)}
 /* ── CART ── */
 .cart-btn{position:relative;background:transparent;border:1.5px solid var(--navy);color:var(--navy);width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;flex-shrink:0}
+.auth-link{color:var(--navy);text-decoration:none;font-size:.85rem;font-weight:600;white-space:nowrap;transition:color .2s}
+.auth-link:hover{color:var(--forest)}
 .cart-btn:hover{background:var(--navy);color:#fff}
 .cart-badge{position:absolute;top:-6px;right:-6px;background:var(--forest);color:#fff;font-size:.62rem;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--paper)}
 .cart-overlay{position:fixed;inset:0;background:rgba(28,22,16,.5);z-index:9995;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease}
@@ -212,6 +214,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
         <li><a href="index.html#visitanos">Visítanos</a></li>
         <li><a href="index.html#contacto">Contacto</a></li>
       </ul>
+      <a href="login.html" class="auth-link">Iniciar sesión</a>
       <button class="cart-btn" id="cartBtn" aria-label="Carrito">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         <span class="cart-badge" id="cartBadge">0</span>
@@ -307,6 +310,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:40px 0}
 </footer>
 
 <script src="books-data.js"></script>
+<script src="auth.js"></script>
 <script src="cart.js"></script>
 <script>
 const WA_NUMBER = '584145962337';

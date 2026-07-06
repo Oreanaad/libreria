@@ -94,11 +94,44 @@ function updateCartUI(){
       checkoutBtn.removeAttribute('href');
     } else {
       checkoutBtn.classList.remove('disabled');
-      const lines = cart.map((i, idx) => `${idx + 1}. *${i.title}*${i.qty > 1 ? ` (x${i.qty})` : ''} — $${i.price * i.qty}`).join('\n');
-      const text = `Hola Booksflea 👋 Quiero comprar:\n\n${lines}\n\nTotal: $${cartTotal(cart)}\n\n¡Gracias!`;
-      checkoutBtn.href = `https://wa.me/${CART_WA_NUMBER}?text=${encodeURIComponent(text)}`;
+      checkoutBtn.href = checkoutWaLink(cart);
     }
   }
+}
+
+function checkoutWaLink(cart){
+  const lines = cart.map((i, idx) => `${idx + 1}. *${i.title}*${i.qty > 1 ? ` (x${i.qty})` : ''} — $${i.price * i.qty}`).join('\n');
+  const text = `Hola Booksflea 👋 Quiero comprar:\n\n${lines}\n\nTotal: $${cartTotal(cart)}\n\n¡Gracias!`;
+  return `https://wa.me/${CART_WA_NUMBER}?text=${encodeURIComponent(text)}`;
+}
+
+// If the client is logged in (auth.js loaded), save the order to their
+// account before handing off to WhatsApp — the cart still clears and
+// WhatsApp still opens even if saving fails, since that's the real
+// transaction channel; the account record is a convenience on top.
+async function handleCheckout(e){
+  const cart = getCart();
+  if (!cart.length) return;
+  e.preventDefault();
+  const waLink = checkoutWaLink(cart);
+  const btn = document.getElementById('cartCheckout');
+
+  if (typeof isLoggedIn === 'function' && isLoggedIn()) {
+    btn.textContent = 'Guardando pedido...';
+    try {
+      await authFetch('/orders', {
+        method: 'POST',
+        body: JSON.stringify({ items: cart, total: cartTotal(cart) })
+      });
+    } catch (err) {
+      console.error('No se pudo guardar el pedido en la cuenta:', err.message);
+    }
+    btn.textContent = 'Finalizar por WhatsApp →';
+  }
+
+  saveCart([]);
+  closeCart();
+  window.open(waLink, '_blank', 'noopener');
 }
 
 function openCart(){
@@ -128,6 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (cartClose) cartClose.addEventListener('click', closeCart);
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCart(); });
+  const cartCheckout = document.getElementById('cartCheckout');
+  if (cartCheckout) cartCheckout.addEventListener('click', handleCheckout);
 });
 
 // keep the badge in sync if the cart is changed from another tab/page
